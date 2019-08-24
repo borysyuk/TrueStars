@@ -54,12 +54,21 @@ class MarketOwnerService extends BlockchainService {
         return this.addMarketToBlockchain(market);
     }
 
+    computeHash(id) {
+        return AppStorageService.mainContract.methods.computeId(parseInt(id, 10)).call({from: AppStorageService.currentAccount});
+    }
+
     getMarket(id) {
+        console.log("id = ", id);
         var address = AppStorageService.currentAccount;
 
-        return AppStorageService.mainContract.getMarket(id).then(result => {
-            return this.convertMarket(result);
+        console.log("this", this.computeHash);
+        return this.computeHash(id).then(hash => {
+            return AppStorageService.mainContract.getMarket(hash).then(result => {
+                return this.convertMarket(result);
+            })
         })
+
     }
 }
 

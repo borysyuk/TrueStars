@@ -9,7 +9,7 @@ class MarketFind extends Component {
         super(props);
 
         this.state = {
-            marketId: props.marketId,
+            marketId: props.id,
 
             marketHash: props.marketHash
         };
@@ -23,7 +23,7 @@ class MarketFind extends Component {
         const name = target.name;
 
         var state = {...this.state};
-        state['marketId'] = value;
+        state['id'] = value;
         state['marketHash'] = '/marketowner/market/view/'+value;
 
         this.setState(state);
@@ -42,7 +42,7 @@ class MarketFind extends Component {
                                 <input name="id"
                                        type="text"
                                        placeholder="Internal id"
-                                       value={this.state.marketId}
+                                       value={this.state.id}
                                        onChange={this.handleIdChange}
 
                                 />&nbsp;

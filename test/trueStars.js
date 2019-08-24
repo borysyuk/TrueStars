@@ -28,7 +28,7 @@ contract("TrueStars", function ([_, admin1, admin2, admin3, owner]) {
         context('add market', async function (){
             it('should add market', async function (){
                 let tx = await this.contract.createMarket(1, 100, { from: owner });
-                id = tx.logs[0].args.marketId;
+                id = tx.logs[0].args.id;
                 let result = await this.contract.getMarket.call(id);
                 //console.log(result);
 

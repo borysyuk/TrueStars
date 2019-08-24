@@ -11,13 +11,41 @@ class MarketView extends Component {
 
         this.state = {
             marketInfo: props.marketInfo,
+            id: props.id,
         };
+
+        this.handleReveal = this.handleReveal.bind(this);
+        this.handleWithdraw = this.handleWithdraw.bind(this);
+        this.handleDestroy = this.handleDestroy.bind(this);
+    }
+
+    handleReveal() {
+
+    }
+
+    handleWithdraw() {
+
+    }
+
+    handleDestroy(){
 
     }
 
     render(){
         return (
-            <div>Info</div>
+            <div>
+                <b>maxRate :</b> {this.state.marketInfo.maxRate}<br/>
+                <b>winRate :</b> {this.state.marketInfo.winRate}<br/>
+                <b>winDistance :</b>  {this.state.marketInfo.winDistance}<br/>
+                <b>stake :</b> {this.state.marketInfo.stake}<br/>
+                <b>owner :</b> {this.state.marketInfo.owner}<br/>
+                <b>phase :</b>  {this.state.marketInfo.phase}<br/>
+                <b>totalVotes :</b>  {this.state.marketInfo.totalVotes}<br/>
+
+                {this.state.marketInfo.phase === 1 && <button className="pure-button pure-button-primary" onClick={this.handleReveal}>Move to Reveal phase</button>}
+                {this.state.marketInfo.phase === 2 && <button className="pure-button pure-button-primary" onClick={this.handleWithdraw}>Move to Withdraw phase</button>}
+                {this.state.marketInfo.phase === 3 && <button className="pure-button" onClick={this.handleDestroy}>Move to Destroy phase</button>}
+            </div>
         )
     }
 }

@@ -16,7 +16,7 @@ class PageMarketOwnerIndex extends Component {
                     <center><h1>True Stars</h1> market page</center>
                     <div>
                         <Link to='/marketowner/market/new' className="pure-button">Create new market</Link>&nbsp;
-                        <Link to='/marketowner/market/change' className="pure-button">Change market</Link>&nbsp;
+                        <Link to='/marketowner/market/change' className="pure-button">Find market</Link>&nbsp;
                     </div>
                 </div>
 
