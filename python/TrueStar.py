@@ -1,7 +1,6 @@
 class SchellingStars:
     def __init__(self, admin_user, market_name):
         self.max_vote = 5
-        self.min_vote = 1
         self.phase = "voting"
         self.admin = admin_user
         self.name = market_name
@@ -57,7 +56,7 @@ class SchellingStars:
         self.voter_votes = None # temporary
         if x > self.max_vote:
             return "vote was too large. Ignoring it."
-        if x < self.min_vote:
+        if x < 1:
             return "vote was too small. Ignoring it."
         if round(x) != x:
             return "vote was not an integer. Ignoring it."
@@ -73,7 +72,7 @@ class SchellingStars:
         if self.phase != "revealing": 
             return "error: phase should be revealing"
         self.phase = "withdrawing"
-        self.correct_result = round(self.total_vote_sum_tallied / self.total_vote_weight_cast)   
+        self.correct_result = floor(0.5 + self.total_vote_sum_tallied / self.total_vote_weight_cast)   
         self.total_winners_weight = self.total_weight_that_voted_for_result[self.correct_result]
         if self.total_winners_weight != 0: # if all are 0, no one won. Destroy can be called right away for all we care.
             self.prize_pool_winners_multiplier_helper = self.voter_weight[caller] / self.total_winners_weight
