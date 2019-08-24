@@ -4,6 +4,7 @@ class BlockchainService {
          console.log("Request", request);
         return new Promise((resolve, reject) => {
             request.estimateGas(options).then(() => {
+
                 request.send(options)
                 .on('transactionHash', (hash) => {
                     resolve(hash);

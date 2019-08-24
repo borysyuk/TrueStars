@@ -5,16 +5,19 @@ class MarketOwnerService extends BlockchainService {
 
     newEntity() {
         return {
-            id: 0,
+            id: 1,
             maxRate: 10,
         }
     }
 
     addMarketToBlockchain(market) {
-        console.log('add markets', market, AppStorageService);
-        return this.sendToBlockchain(
-            AppStorageService.mainContract.methods.createMarket(market.id, market.maxRate),
-            {from: AppStorageService.currentAccount}
+         //return AppStorageService.mainContract.methods.createMarket().send({from: AppStorageService.currentAccount});
+         return this.sendToBlockchain(
+             AppStorageService.mainContract.methods.createMarket(
+                 market.id,
+                 market.maxRate
+             ),
+             {from: AppStorageService.currentAccount}
         );
     }
 
