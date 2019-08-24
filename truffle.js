@@ -39,10 +39,6 @@ module.exports = {
             },
             network_id: 1,
             gas: 7000000, // Gas limit used for deploys
-            syncServer: {
-                port: process.env.SYNC_SERVER_PORT_MAINNET,
-                websocketProvider: process.env.SYNC_SERVER_MAINNET_WEBSOCKET_PROVIDER
-            }
         },
         ropsten: {
             from: process.env.FROM_ADDRESS_ROPSTEN, // default address to use for any transaction Truffle makes during migrations
@@ -50,10 +46,6 @@ module.exports = {
               return new HDWalletProvider(process.env.MNEMONIC_RINKEBY, process.env.SYNC_SERVER_ROPSTEN_HTTP_PROVIDER);
             },
             network_id: '3',
-            syncServer: {
-                port: process.env.SYNC_SERVER_PORT_ROPSTEN,
-                websocketProvider: process.env.SYNC_SERVER_ROPSTEN_WEBSOCKET_PROVIDER
-            }
         },
         rinkeby: {
             from: process.env.FROM_ADDRESS_RINKEBY, // default address to use for any transaction Truffle makes during migrations
@@ -62,10 +54,6 @@ module.exports = {
             },
             network_id: 4,
             gas: 6900000, // Gas limit used for deploys
-            syncServer: {
-                port: process.env.SYNC_SERVER_PORT_RINKEBY,
-                websocketProvider: process.env.SYNC_SERVER_RINKEBY_WEBSOCKET_PROVIDER
-            }
         },
         coverage: {
             host: "localhost",
