@@ -12,3 +12,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.marketowner-menu,
+.player-menu
+{
+  margin: 20px 0px;
+}
+
+.field-block {
+  padding: 0px 10px;
+}
+
+.column-field {
+  padding-right: 30px;
+}
+
+.center {
+  text-align: center;
+}

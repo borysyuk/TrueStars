@@ -85,7 +85,7 @@ contract TrueStars {
     }
 
     /**
-    * @dev Check if phase is withdraw
+    * @dev Check if phase is before withdraw
     * @param _marketId Market ID.
     */
     modifier onlyBeforeWithdraw(bytes32 _marketId) {
