@@ -1,6 +1,6 @@
 # TrueStars
 
-Created in EthZweiBerlin by:
+Created at EthZweiBerlin by:
 - Ihor Borysyuk
 - Igor Dulger
 - Elad Verbin
