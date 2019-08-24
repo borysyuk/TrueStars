@@ -1,73 +1,129 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import {Switch, Route, BrowserRouter as Router} from 'react-router-dom'
+import MainContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 
 import "./App.css";
+import AppStorageService from "./services/AppStorageService";
+import GeneralService from "./services/GeneralService";
+import {NotificationContainer} from 'react-notifications';
+import PageMarketOwnerIndex from "./components/Pages/MarketOwner/PageMarketOwnerIndex";
+import PageGeneralIndex from "./components/Pages/General/PageGeneralIndex";
+import PagePlayerIndex from "./components/Pages/Player/PagePlayerIndex";
+import PageEmpty from "./components/Pages/PageEmpty";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+    state = {
+        web3: null,
+        account: null,
+        contract: null,
+        isReady: false,
+        isError: false,
+        errorMessage: ''
+    };
 
-  componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
-
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
-
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
+    displayErrors(errorMessage) {
+        this.setState({
+            isError: true,
+            isReady: true,
+            errorMessage: errorMessage
+        });
     }
-  };
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
-  };
-
-  render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
+    initWeb3() {
+        return getWeb3().then(web3 => {
+            AppStorageService.set('web3', web3);
+            return web3;
+        }).catch(() => {
+            this.displayErrors('Error finding web3.');
+        })
     }
-    return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
-      </div>
-    );
-  }
+
+    InspectAccountChange() {
+        this.changeAccountIntervalId = setInterval(() => {
+            GeneralService.getCurrentAccount().then((newAccount) => {
+                if ((newAccount !== this.state.account) && (this.state.account)) {
+                    window.location.reload();
+                }
+            });
+        }, 1000);
+    }
+
+    initApplication() {
+        return this.initWeb3().then(web3 => {
+            console.log("2web3", web3);
+            return web3.eth.net.getId().then(networkId => {
+                const deployedNetwork = MainContract.networks[networkId];
+                if (deployedNetwork === undefined) {
+                    return Promise.reject("Ca't find the contract in this network");
+                }
+                const instance = new web3.eth.Contract(
+                    MainContract.abi,
+                    deployedNetwork && deployedNetwork.address,
+                );
+
+                GeneralService.getCurrentAccount().then(account => {
+                    AppStorageService.set('mainContract', instance);
+                    AppStorageService.set('currentAccount', account);
+
+                    this.setState({isReady: true, web3: web3, account: account, contract: instance });
+                });
+            });
+
+        }).catch(e => {
+            console.log('NO Web3. User mode on.', e);
+            this.setState({isReady: true, web3: null, account: null, contract: null, roles: {isAdmin: false, isOwner: false}});
+        });
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.changeAccountIntervalId);
+    }
+
+
+    componentDidMount() {
+        this.initApplication().then(() => {
+            this.InspectAccountChange();
+        }).catch(error => {
+            alert(
+                `Failed to load web3, accounts, or contract. Check console for details.`,
+            );
+            console.error(error);
+        });
+    };
+
+    render() {
+        if (!this.state.isReady) {
+            return <div>Loading...</div>;
+        }
+        return (
+            <div className="general-container">
+                Hello {this.state.account} !
+                <div className="App">
+                    <Router>
+                        <main className="container">
+                            <div className='sub-container'>
+                                <Switch>
+                                    <Route path='/' exact render={(props) => (
+                                        <PageGeneralIndex />
+                                    )}/>
+
+                                    <Route path='/marketowner' component={PageMarketOwnerIndex}/>
+                                    <Route path='/player' component={PagePlayerIndex}/>
+
+
+                                    <Route render={(props) => (
+                                        <PageEmpty text="Error: 404. Page not found."/>
+                                    )}/>
+                                </Switch>
+                            </div>
+                        </main>
+                    </Router>
+                    <NotificationContainer/>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default App;
