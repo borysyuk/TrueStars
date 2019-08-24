@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {Switch, Route} from 'react-router-dom'
 import {withRouter} from 'react-router-dom';
 import PageMarketOwnerMarketNew from "./PageMarketOwnerMarketNew";
-import PageMarketOwnerMarketChange from "./PageMarketOwnerMarketChange";
+import PageMarketOwnerMarketFind from "./PageMarketOwnerMarketFind";
 import { Link } from 'react-router-dom';
+import PageMarketOwnerMarketView from "./PageMarketOwnerMarketView";
 
 
 class PageMarketOwnerIndex extends Component {
@@ -21,7 +22,8 @@ class PageMarketOwnerIndex extends Component {
 
                 <Switch>
                     <Route path='/marketowner/market/new' exact component={PageMarketOwnerMarketNew}/>
-                    <Route path='/marketowner/market/change' exact component={PageMarketOwnerMarketChange}/>
+                    <Route path='/marketowner/market/change' exact component={PageMarketOwnerMarketFind}/>
+                    <Route path='/marketowner/market/view/:id' exact component={PageMarketOwnerMarketView}/>
                 </Switch>
 
             </div>
