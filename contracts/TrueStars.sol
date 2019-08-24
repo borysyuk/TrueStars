@@ -250,7 +250,7 @@ contract TrueStars {
     }
 
     /**
-    * @dev Add vote commitment
+    * @dev Reveal your vote
     * @param _rate hashed vote
     * @param _random hashed vote
     * @param _id market ID
@@ -316,5 +316,75 @@ contract TrueStars {
         assert(markets[_id].totalWithdraw <= markets[_id].stake);
         player.transfer(prize);
         return true;
+    }
+
+    /**
+    * @dev Return current market state
+    * @param _id market ID
+    */
+    function getMarket(bytes32 _id)
+        public
+        view
+        returns (
+            uint8 maxRate,
+            uint8 winRate,
+            uint8 winDistance,
+            uint stake,
+            address owner,
+            Phases phase,
+            uint totalVotes
+        )
+    {
+        return (
+            markets[_id].maxRate,
+            markets[_id].winRate,
+            markets[_id].winDistance,
+            markets[_id].stake,
+            markets[_id].owner,
+            markets[_id].phase,
+            markets[_id].totalVotes
+        );
+    }
+
+    /**
+    * @dev Return player
+    * @param _id market ID
+    * @param _player player's address
+    */
+    function getPlayer(bytes32 _id, address _player)
+        public
+        view
+        returns (
+                uint weight,
+                bytes32 commitment,
+                uint vote,
+                bool withdrawStatus
+        )
+    {
+        return (
+            markets[_id].players[_player].weight,
+            markets[_id].players[_player].commitment,
+            markets[_id].players[_player].vote,
+            markets[_id].players[_player].withdraw
+        );
+    }
+
+    /**
+    * @dev check if a player isWinner
+    * @param _id market ID
+    * @param _player player's address
+    */
+    function isWinner(bytes32 _id, address _player)
+        public
+        view
+        returns (bool)
+    {
+        if(
+            int(markets[_id].players[_player].vote) == int(markets[_id].winRate) + int(markets[_id].winDistance) ||
+            int(markets[_id].players[_player].vote) == int(markets[_id].winRate) - int(markets[_id].winDistance)
+        ) {
+            return true;
+        }
+        return false;
     }
 }
