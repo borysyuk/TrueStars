@@ -22,7 +22,7 @@ contract TrueStars {
         Phases phase;
         uint totalVotes;
         uint totalWeights;
-        mapping (uint => uint) totalWeightsByRate;
+        mapping (uint8 => uint) totalWeightsByRate;
         uint totalWithdraw;
     }
     mapping (bytes32 => Market) private markets;
