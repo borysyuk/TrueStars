@@ -21,23 +21,24 @@ Therefore, each hacker's rating represents their opinion. But it also represents
 
 ## Future Vision
 
-When True Stars is used by Uber (for example), a "market" is created for each driver. This prize pool for this market is seeded with prize money by Uber, for example 5% of the fees that Uber takes from that drivers' rides. Each time that a user takes a ride with a driver, the user gets to leave a rating with the driver. At the end of the month, the user who guessed the correct average rating, wins the prize pool.
+When True Stars is used by Decentralized Uber (for example), a "market" is created for each driver. This prize pool for this market is seeded with prize money by Uber, for example 5% of the fees that Uber takes from that drivers' rides. Each time that a user takes a ride with a driver, the user gets to leave a rating with the driver. At the end of the month, the user who guessed the correct average rating, wins the prize pool. All the smart contracts are called automatically be Decentralized Uber's smart contracts, so there's no human intervention in this entire process.
 
 ## How we built it
 
 We started out by sketching a solid cryptoeconomic system that can fix star ratings. We then built a PoC for this system in Python (for quick prototyping). This allowed us to quickly iterate on any points that were under-specified. Finally, we programmed the system in Solidity, and wrote unit tests in XXXX.
 
-## Challenges we ran into
+## Some comments and observations
 
-## Accomplishments that we're proud of
+- The "admin" acount would often be another smart contract. that smart contract would systematically run the True Stars system, waiting a pre-defined amount of time in each phase, etc
 
-## What we learned
+- This system is difficult to take advantage of, since presumably presumably cannot win from it more than they spent on the underlying service. In fact, this constraint can be explicitly enforced.
+
 
 ## What's next for TrueStars
 
 1. **Business Development.** We thinks this system can solve the problems of Uber, Netflix, Amazon, and many others. The implementation for Uber doesn't need to be decentralized -- it can be done using a ServerCoin, and prizes can be given in Uber credit. But for decentralized Uber/Amazon/etc (e.g. OpenBazaar or Arcade City), the smart contract should be used. OpenBazaar's smart contracts themselves can directly interact with TrueStars and run the star ratings system.
 
-2. **Avoiding Ratings** Inflation by rating on a curve* The crypto-economics of TrueStars can be improved to prevent "ratings inflation". Specifically, the rated entities (e.g. drivers) should be split into cohorts. And the average rankings of an entire cohort need to be sorted and re-normalized amongst themselves before evaluating the ratings. This avoids "ratings inflation".
+2. **Avoiding Ratings Inflation by rating on a curve** The crypto-economics of TrueStars can be improved to prevent "ratings inflation". Specifically, the rated entities (e.g. drivers) should be split into cohorts. And the average rankings of an entire cohort need to be sorted and re-normalized amongst themselves before evaluating the ratings. This avoids "ratings inflation".
 
 3. **Make the system Incentive-Aligned** When ranking Uber drivers, the most likely rating for next month is the same as for this month. Users know this, so they are incentivized to rate the same as last month, leading to "ratings stagnation". We know how to improve the cryptoeconomics to avoid this: by splitting the prize pool based on the "prior rating", we can incentivize users to take "bold guesses" e.g. to guess that a driver that last month had 5 stars will actually get 2 stars this month. Users that make this 5->2 guess will compete over the same large prize pool, and thus if they are correct, will win big. This incentivizes them to make such a guess, and in fact we believe this makes the system incentive-aligned (assuming users don't collude).
 
