@@ -3,7 +3,7 @@
 Created in EthZweiBerlin by:
 - Ihor Borysyuk
 - Igor Dulger
-- Elad Verbinv
+- Elad Verbin
 
 ## Inspiration
 
