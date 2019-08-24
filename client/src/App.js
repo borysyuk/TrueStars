@@ -3,7 +3,14 @@ import {Switch, Route, BrowserRouter as Router} from 'react-router-dom'
 import MainContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 
+import './css/oswald.css';
+import './css/open-sans.css';
+import './css/pure-min.css';
 import "./App.css";
+import 'react-notifications/lib/notifications.css';
+import 'antd/dist/antd.css';
+
+
 import AppStorageService from "./services/AppStorageService";
 import GeneralService from "./services/GeneralService";
 import {NotificationContainer} from 'react-notifications';
@@ -11,6 +18,7 @@ import PageMarketOwnerIndex from "./components/Pages/MarketOwner/PageMarketOwner
 import PageGeneralIndex from "./components/Pages/General/PageGeneralIndex";
 import PagePlayerIndex from "./components/Pages/Player/PagePlayerIndex";
 import PageEmpty from "./components/Pages/PageEmpty";
+import { Link } from 'react-router-dom';
 
 class App extends Component {
     state = {
@@ -99,6 +107,7 @@ class App extends Component {
         return (
             <div className="general-container">
                 Hello {this.state.account} !
+
                 <div className="App">
                     <Router>
                         <main className="container">
