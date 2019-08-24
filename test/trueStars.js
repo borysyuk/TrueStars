@@ -28,10 +28,8 @@ contract("TrueStars", function ([_, admin1, admin2, admin3, owner]) {
         context('add market', async function (){
             it('should add market', async function (){
                 let tx = await this.contract.createMarket(1, 100, { from: owner });
-                id = tx.logs[0].args.marketId;
-                let result = await this.contract.getMarket.call(id);
-                //console.log(result);
-
+                let result = await this.contract.getMarket.call(tx.logs[0].args.marketId);
+                let id = await this.contract.computeId.call(1, owner);
             });
 
             it('should raise exception when market is already exists', async function (){

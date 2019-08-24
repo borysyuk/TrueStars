@@ -107,7 +107,7 @@ contract TrueStars {
         returns (bytes32)
     {
         Market memory market;
-        bytes32 id = computeId(_id);
+        bytes32 id = computeId(_id, msg.sender);
         require(markets[id].phase == Phases.NULL, "Already exists");
         require(_maxRate <= MAX_ALLOWED_RATE, "Max rate is too big");
 
@@ -125,12 +125,12 @@ contract TrueStars {
     * @dev generate ID.
     * @param _id market ID
     */
-    function computeId(uint _id)
+    function computeId(uint _id, address owner)
         public
-        view
+        pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(_id, msg.sender));
+        return keccak256(abi.encodePacked(_id, owner));
     }
 
     /**
