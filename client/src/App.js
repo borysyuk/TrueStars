@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Switch, Route, BrowserRouter as Router} from 'react-router-dom'
-import MainContract from "./contracts/SimpleStorage.json";
+import MainContract from "./contracts/TrueStars.json";
 import getWeb3 from "./utils/getWeb3";
 
 import './css/oswald.css';
@@ -74,13 +74,14 @@ class App extends Component {
                     AppStorageService.set('mainContract', instance);
                     AppStorageService.set('currentAccount', account);
 
+                    console.log('App DATA', AppStorageService);
                     this.setState({isReady: true, web3: web3, account: account, contract: instance });
                 });
             });
 
         }).catch(e => {
             console.log('NO Web3. User mode on.', e);
-            this.setState({isReady: true, web3: null, account: null, contract: null, roles: {isAdmin: false, isOwner: false}});
+            this.setState({isReady: true, web3: null, account: null, contract: null});
         });
     }
 
@@ -103,35 +104,41 @@ class App extends Component {
     render() {
         if (!this.state.isReady) {
             return <div>Loading...</div>;
+        } else {
+            if (!this.state.web3) {
+                return <div>Can't load web3 or contract</div>;
+            } else {
+                return (
+                    <div className="general-container">
+                        Hello {this.state.account} !
+
+                        <div className="App">
+                            <Router>
+                                <main className="container">
+                                    <div className='sub-container'>
+                                        <Switch>
+                                            <Route path='/' exact render={(props) => (
+                                                <PageGeneralIndex />
+                                            )}/>
+
+                                            <Route path='/marketowner' component={PageMarketOwnerIndex}/>
+                                            <Route path='/player' component={PagePlayerIndex}/>
+
+
+                                            <Route render={(props) => (
+                                                <PageEmpty text="Error: 404. Page not found."/>
+                                            )}/>
+                                        </Switch>
+                                    </div>
+                                </main>
+                            </Router>
+                            <NotificationContainer/>
+                        </div>
+                    </div>
+                );
+            }
+
         }
-        return (
-            <div className="general-container">
-                Hello {this.state.account} !
-
-                <div className="App">
-                    <Router>
-                        <main className="container">
-                            <div className='sub-container'>
-                                <Switch>
-                                    <Route path='/' exact render={(props) => (
-                                        <PageGeneralIndex />
-                                    )}/>
-
-                                    <Route path='/marketowner' component={PageMarketOwnerIndex}/>
-                                    <Route path='/player' component={PagePlayerIndex}/>
-
-
-                                    <Route render={(props) => (
-                                        <PageEmpty text="Error: 404. Page not found."/>
-                                    )}/>
-                                </Switch>
-                            </div>
-                        </main>
-                    </Router>
-                    <NotificationContainer/>
-                </div>
-            </div>
-        );
     }
 }
 

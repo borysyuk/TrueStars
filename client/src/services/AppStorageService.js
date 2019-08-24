@@ -2,7 +2,7 @@ class AppStorageService {
 
     constructor (){
         this.web3 = null;
-        this.hallOfFameContract = null;
+        this.mainContract = null;
         this.currentAccount = null;
         this.backendURL = null;
     }

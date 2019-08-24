@@ -25,16 +25,20 @@ class MarketAdd extends Component {
         event.preventDefault();
         this.checkValidation().then(isValid => {
             if (isValid) {
+                console.log('valid');
                 try {
                     this.state.submit(this.state.market).then(() => {
+                        console.log('then');
                         NotificationManager.info('Please wait for confirmation.', '', 5000);
                         this.props.history.push('/marketowner');
                     }).catch(error => {
+                        console.log('error', error);
                         console.log(GeneralService.getWeb3ErrorText(error.message));
-                        NotificationManager.error('Cannot '+this.state.mode+' admin.', GeneralService.getWeb3ErrorText(error.message), 8000);
+                        NotificationManager.error('Cannot '+this.state.mode+' market.', GeneralService.getWeb3ErrorText(error.message), 8000);
                         return false;
                     });
                 } catch (error) {
+                    console.log("errors", error);
                     if (error.message.indexOf('invalid address') >= 0) {
                         this.showInvalidData(['address'], ['Invalid address.']);
                     }
@@ -68,6 +72,11 @@ class MarketAdd extends Component {
                 result = false;
             }
 
+            if (this.state.market.id < 1) {
+                fields.push('id');
+                messages.push('Internal ID should be greatest than zero.');
+                result = false;
+            }
             if ((this.state.market.maxRate === "") || (this.state.market.maxRate === 0)) {
                 fields.push('maxRate');
                 messages.push('Maximum rate is required field and should be greatest than zero.');

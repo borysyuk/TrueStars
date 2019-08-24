@@ -1,9 +1,10 @@
 class BlockchainService {
 
     sendToBlockchain(request, options) {
-        // console.log("Request", request);
+         console.log("Request", request);
         return new Promise((resolve, reject) => {
             request.estimateGas(options).then(() => {
+
                 request.send(options)
                 .on('transactionHash', (hash) => {
                     resolve(hash);
@@ -12,6 +13,7 @@ class BlockchainService {
                     reject(error);
                 });
             }).catch((error) => {
+                console.log('error blockchain service');
                 reject(error);
             });
         })
