@@ -1,5 +1,10 @@
 # TrueStars
 
+Created in EthZweiBerlin by:
+- Ihor Borysyuk
+- Igor Dulger
+- Elad Verbinv
+
 ## Inspiration
 
 Star Ratings are broken: On Uber and Amazon, on Google Maps and Deliveroo, and everywhere else. No one leaves ratings, and if they do, it's because they're upset, or paid shills. This is not surprising: users are not incentivized to rate honestly, so why would they? TrueStars aims to fix that.  TrueStars is a cryptoeconomic mechanism that incentives users to give star ratings -- and to be truthful when giving them!
