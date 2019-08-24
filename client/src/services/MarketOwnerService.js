@@ -6,14 +6,15 @@ class MarketOwnerService extends BlockchainService {
 
 
     convertMarket(solidityResult) {
+        console.log("solidityResult", solidityResult);
         var info = this.newMarketInfo();
-        info.maxRate = solidityResult[0];
-        info.winRate = solidityResult[1];
-        info.winDistance = solidityResult[2];
-        info.stake = solidityResult[3];
+        info.maxRate = parseInt(solidityResult[0], 10);
+        info.winRate = parseInt(solidityResult[1], 10);
+        info.winDistance = parseInt(solidityResult[2], 10);
+        info.stake = parseInt(solidityResult[3],10);
         info.owner = solidityResult[4];
-        info.phase = solidityResult[5];
-        info.totalVotes = solidityResult[6];
+        info.phase = parseInt(solidityResult[5], 10);
+        info.totalVotes = parseInt(solidityResult[6], 10);
 
         return info;
     }
@@ -55,19 +56,36 @@ class MarketOwnerService extends BlockchainService {
     }
 
     computeHash(id) {
-        return AppStorageService.mainContract.methods.computeId(parseInt(id, 10)).call({from: AppStorageService.currentAccount});
+        console.log('AppStorageService.currentAccount', AppStorageService.currentAccount);
+        return AppStorageService.mainContract.methods.computeId(parseInt(id, 10), AppStorageService.currentAccount).call({from: AppStorageService.currentAccount});
     }
 
     getMarket(id) {
         console.log("id = ", id);
-        var address = AppStorageService.currentAccount;
-
         console.log("this", this.computeHash);
         return this.computeHash(id).then(hash => {
-            return AppStorageService.mainContract.getMarket(hash).then(result => {
+            console.log("hash", hash);
+            return AppStorageService.mainContract.methods.getMarket(hash).call({from: AppStorageService.currentAccount}).then(result => {
                 return this.convertMarket(result);
-            })
+            }).catch(console.log)
         })
+
+    }
+
+    switchToReveal(id) {
+        return this.computeHash(id).then(hash => {
+            this.sendToBlockchain(
+                AppStorageService.mainContract.methods.startReveal(hash),
+                {from: AppStorageService.currentAccount}
+            );
+        });
+    }
+
+    switchToWithdraw(id) {
+
+    }
+
+    switchToDestroy(id) {
 
     }
 }

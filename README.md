@@ -1,9 +1,9 @@
 # TrueStars
 
-Created in EthZweiBerlin by:
+Created at EthZweiBerlin by:
 - Ihor Borysyuk
 - Igor Dulger
-- Elad Verbinv
+- Elad Verbin
 
 ## Inspiration
 
@@ -47,6 +47,52 @@ We started out by sketching a solid cryptoeconomic system that can fix star rati
 
 6. **User stories.** We'd like to outline user stories for many types of use cases: Uber, Amazon, Foodora, are all slightly different. We'd like to outline suggested integrations with all of these kinds of systems, and their decentralized counterparts.
 
+## How to install
 
+```
+$  git clone git@git@github.com:borysyuk/TrueStars.git MY_DIR
+OR
+$  git clone https://git@github.com:borysyuk/TrueStars.git MY_DIR
+```
 
- 
+```
+$ cd MY_DIR
+$ npm install
+```
+ Start in another terminal
+
+ ```
+ $ ganache-cli
+ ```
+
+ copy mnemonic string and save it, you will see something like this  
+
+ ```
+  HD Wallet
+ ==================
+ Mnemonic:      make dog coffee child enough boy write sauce polar sport problem junior
+ ```
+ Return to the terminal where you installed the project
+
+### Compile solidity contracts
+```
+$ truffle compile
+```
+
+### Check that all tests a passed
+```
+$ truffle test
+```
+
+### Deploy contracts to local blockchain
+```
+$ truffle migrate --reset
+```
+
+### Start web server localhost:3000
+```
+$ npm run start
+```
+
+We deployed the project to Rinkeby
+https://rinkeby.etherscan.io/address/0x87fa51bC350bca1bAdB52D2fd220bbE6583C6b13#code
