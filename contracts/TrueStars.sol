@@ -71,7 +71,7 @@ contract TrueStars {
     * @param _marketId Market ID.
     */
     modifier onlyReveal(bytes32 _marketId) {
-        require(markets[_marketId].phase == Phases.REVEAL, "Commit phase expected");
+        require(markets[_marketId].phase == Phases.REVEAL, "Reveal phase expected");
         _;
     }
 
@@ -80,7 +80,7 @@ contract TrueStars {
     * @param _marketId Market ID.
     */
     modifier onlyWithdraw(bytes32 _marketId) {
-        require(markets[_marketId].phase == Phases.WITHDRAW, "Commit phase expected");
+        require(markets[_marketId].phase == Phases.WITHDRAW, "Withdraw phase expected");
         _;
     }
 
