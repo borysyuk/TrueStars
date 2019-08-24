@@ -1,0 +1,40 @@
+{
+  "name": "TrueStars",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "fortmatic": "^0.7.0",
+    "openzeppelin-solidity": "^2.1.2",
+    "truffle-hdwallet-provider": "^1.0.4"
+  },
+  "devDependencies": {
+    "bignumber.js": "^8.0.2",
+    "chai": "^4.2.0",
+    "chai-bignumber": "^3.0.0",
+    "eth-gas-reporter": "^0.1.12",
+    "openzeppelin-test-helpers": "^0.1.2",
+    "solidity-coverage": "^0.6.0-beta.5",
+    "web3": "^1.0.0-beta.46"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node ./client/backend/seeders/blockchainSeeder.js",
+    "devdeploy": "truffle migrate --reset && npm run seed && npm run backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/borysyuk/TrueStars.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/borysyuk/TrueStars/issues"
+  },
+  "homepage": "https://github.com/borysyuk/TrueStars#readme"
+}
