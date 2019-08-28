@@ -112,7 +112,7 @@ contract TrueStars {
         require(markets[id].phase == Phases.NULL, "Already exists");
         require(_maxRating <= MAX_ALLOWED_RATING, "Max rating is too big");
 
-		market.name = _name
+		market.name = _name;
         market.maxRating = _maxRating;
         market.stake = msg.value;
         market.owner = msg.sender;
