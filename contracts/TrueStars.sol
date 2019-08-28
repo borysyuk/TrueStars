@@ -16,7 +16,7 @@ contract TrueStars {
 
     struct Market {
         mapping (address => Player) players;
-		uint name;
+		uint code;
         uint8 maxRating;
         uint8 winRating;
         uint8 winDistance;
@@ -29,10 +29,11 @@ contract TrueStars {
         uint totalWithdraw;
         uint totalWinWeight;
     }
+
     mapping (bytes32 => Market) private markets;
 
-    event MarketCreated( 
-        uint indexed marketName,
+    event MarketCreated(
+        uint indexed marketCode,
         bytes32 indexed marketId,
         address indexed owner
     );
@@ -99,44 +100,44 @@ contract TrueStars {
 
     /**
     * @dev create Market.
-    * @param _name market name (represented as a numnber).
+    * @param _code market name (represented as a numnber).
     * @param _maxRating max possible rating for this market.
     */
-    function createMarket(uint _name, uint8 _maxRating)
+    function createMarket(uint _code, uint8 _maxRating)
         public
         payable
         returns (bytes32)
     {
         Market memory market;
-        bytes32 id = computeId(_name, msg.sender);
+        bytes32 id = computeId(_code, msg.sender);
         require(markets[id].phase == Phases.NULL, "Already exists");
         require(_maxRating <= MAX_ALLOWED_RATING, "Max rating is too big");
 
-		market.name = _name
+		market.code = _code;
         market.maxRating = _maxRating;
         market.stake = msg.value;
         market.owner = msg.sender;
         market.phase = Phases.COMMIT;
         markets[id] = market;
 
-        emit MarketCreated(_name, id, msg.sender);
+        emit MarketCreated(_code, id, msg.sender);
         return id;
     }
 
     /**
     * @dev map market name to market ID. (The mapping depends on who the owner of the market is.)
-    * @param _name market name
+    * @param _code market name
     * @param _owner Owner of the market
     */
-    function computeId(uint _name, address _owner)
+    function computeId(uint _code, address _owner)
         public
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(_name, _owner));
+        return keccak256(abi.encodePacked(_code, _owner));
     }
-	
-	
+
+
     /**
     * @dev Change state to reveal
     * @param _id market ID
@@ -275,10 +276,10 @@ contract TrueStars {
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(_rating, _salt));	
+        return keccak256(abi.encodePacked(_rating, _salt));
     }
 
-	
+
     /**
     * @dev Reveal your vote
     * @param _id market ID
@@ -351,30 +352,32 @@ contract TrueStars {
     /**
     * @dev Return current market state
     * @param _id market ID
+    * @return uint[9] (code, maxRating, winRating, winDistance, stake, phase,
+    * totalVotes, totalWeights, totalWithdraw, totalWinWeight)
+    * @return owner address
     */
     function getMarket(bytes32 _id)
         public
         view
         returns (
-            uint name,
-			uint8 maxRating,
-            uint8 winRating,
-            uint8 winDistance,
-            uint stake,
-            address owner,
-            Phases phase,
-            uint totalVotes
+            uint[10] memory data,
+            address owner
         )
     {
+        data[0] = markets[_id].code;
+        data[1] = uint(markets[_id].maxRating);
+        data[2] = uint(markets[_id].winRating);
+        data[3] = uint(markets[_id].winDistance);
+        data[4] = markets[_id].stake;
+        data[5] = uint(markets[_id].phase);
+        data[6] = markets[_id].totalVotes;
+        data[7] = markets[_id].totalWeights;
+        data[8] = markets[_id].totalWithdraw;
+        data[9] = markets[_id].totalWinWeight;
+
         return (
-            markets[_id].name,
-            markets[_id].maxRating,
-            markets[_id].winRating,
-            markets[_id].winDistance,
-            markets[_id].stake,
-            markets[_id].owner,
-            markets[_id].phase,
-            markets[_id].totalVotes
+            data,
+            markets[_id].owner
         );
     }
 
