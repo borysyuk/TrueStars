@@ -4,6 +4,7 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract TrueStars {
 
     using SafeMath for uint;
+    using SafeMath for uint32;
     enum Phases {NULL, COMMIT, REVEAL, WITHDRAW, DESTROYED}
     uint constant MAX_ALLOWED_RATING = 100;
 
@@ -15,19 +16,19 @@ contract TrueStars {
     }
 
     struct Market {
-        mapping (address => Player) players;
-		uint code;
         uint8 maxRating;
         uint8 winRating;
         uint8 winDistance;
-        uint stake;
-        address owner;
+        uint32 totalVotes;
+        uint32 code;
         Phases phase;
-        uint totalVotes;
+        uint stake;
         uint totalWeights;
-        mapping (int => uint) totalWeightsByRating;
         uint totalWithdraw;
         uint totalWinWeight;
+        address owner;
+        mapping (address => Player) players;
+        mapping (int => uint) totalWeightsByRating;
     }
 
     mapping (bytes32 => Market) private markets;
@@ -103,7 +104,7 @@ contract TrueStars {
     * @param _code market name (represented as a numnber).
     * @param _maxRating max possible rating for this market.
     */
-    function createMarket(uint _code, uint8 _maxRating)
+    function createMarket(uint32 _code, uint _maxRating)
         public
         payable
         returns (bytes32)
@@ -114,7 +115,7 @@ contract TrueStars {
         require(_maxRating <= MAX_ALLOWED_RATING, "Max rating is too big");
 
 		market.code = _code;
-        market.maxRating = _maxRating;
+        market.maxRating = uint8(_maxRating);
         market.stake = msg.value;
         market.owner = msg.sender;
         market.phase = Phases.COMMIT;

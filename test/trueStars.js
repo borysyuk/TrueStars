@@ -36,6 +36,11 @@ contract("TrueStars", function ([_, admin1, admin2, admin3, owner]) {
             let exId = 1;
             let maxRate = 100;
 
+
+            it('should add market without stake', async function (){
+                let tx = await this.contract.createMarket(exId, maxRate, {from: owner });
+            });
+
             it('should add market', async function (){
                 let tx = await this.contract.createMarket(exId, maxRate, {value: stake, from: owner });
                 let id = await this.contract.computeId.call(exId, owner);
