@@ -39,6 +39,8 @@ contract TrueStars {
         address indexed owner
     );
 
+    event Debug (bytes32 indexed hash, bytes data);
+
     event RevealPhase (bytes32 indexed marketId, address indexed owner);
 
     event WithdrawPhase (
@@ -132,9 +134,9 @@ contract TrueStars {
     */
     function computeId(uint _code, address _owner)
         public
-        pure
         returns (bytes32)
     {
+        emit Debug(keccak256(abi.encodePacked(_code, _owner)), abi.encodePacked(_code, _owner));
         return keccak256(abi.encodePacked(_code, _owner));
     }
 

@@ -1,6 +1,7 @@
 const TrueStars = artifacts.require("./TrueStars.sol");
 const exceptions = require("./helpers/expectThrow");
 const events = require("./helpers/expectEvent");
+const helpers = require("./helpers/common");
 const TrueStarsABI = require("../client/src/contracts/TrueStars.json").abi;
 
 const BN = web3.utils.BN;
@@ -29,59 +30,102 @@ contract("TrueStars", function ([_, admin1, admin2, admin3, owner]) {
         });
     });
 
-    context('Test admins', async function (){
+    // context('Test admins', async function (){
+    //
+    //     context('add market', async function (){
+    //         let stake = web3.utils.toWei('100', 'gwei');
+    //         let exId = 1;
+    //         let maxRate = 100;
+    //
+    //
+    //         it('should add market without stake', async function (){
+    //             let tx = await this.contract.createMarket(exId, maxRate, {from: owner });
+    //             let id = await this.contract.computeId.call(exId, owner);
+    //             let market = await this.contract.getMarket.call(id);
+    //
+    //             assert.equal(market.data[1], maxRate);
+    //             assert.equal(market.data[4], 0);
+    //             assert.equal(market.data[5], COMMIT);
+    //
+    //             assert.equal(market.owner, owner);
+    //         });
+    //
+    //         it('should add market', async function (){
+    //             let tx = await this.contract.createMarket(exId, maxRate, {value: stake, from: owner });
+    //             let id = await this.contract.computeId.call(exId, owner);
+    //             let market = await this.contract.getMarket.call(id);
+    //
+    //             assert.equal(market.data[1], maxRate);
+    //             assert.equal(market.data[4], stake);
+    //             assert.equal(market.data[5], COMMIT);
+    //
+    //             assert.equal(market.owner, owner);
+    //         });
+    //
+    //         it('should raise exception when market is already exists', async function (){
+    //             let tx = await this.contract.createMarket(exId, maxRate, { from: owner });
+    //             await exceptions.expectThrow(
+    //                 this.contract.createMarket(exId, maxRate, { from: owner }),
+    //                 exceptions.errTypes.revert,
+    //                 "Already exists"
+    //             );
+    //         });
+    //
+    //         it('should raise exception when rate is too big', async function (){
+    //             await exceptions.expectThrow(
+    //                 this.contract.createMarket(exId, maxRate + 100, { from: owner }),
+    //                 exceptions.errTypes.revert,
+    //                 "Max rating is too big"
+    //             );
+    //         })
+    //
+    //         it('should emit Add admin event', async function (){
+    //             let id = await this.contract.computeId.call(exId, owner);
+    //             await events.inTransaction(
+    //                 this.contract.createMarket(exId, maxRate, { from: owner }),
+    //                 'MarketCreated',
+    //                 {
+    //                     marketCode: new BN(exId),
+    //                     marketId: id,
+    //                     owner: owner
+    //                 }
+    //             );
+    //         });
+    //     });
+    // });
 
-        context('add market', async function (){
-            let stake = web3.utils.toWei('100', 'gwei');
-            let exId = 1;
-            let maxRate = 100;
+    context('Test general functions', async function (){
 
-
-            it('should add market without stake', async function (){
-                let tx = await this.contract.createMarket(exId, maxRate, {from: owner });
-            });
-
-            it('should add market', async function (){
-                let tx = await this.contract.createMarket(exId, maxRate, {value: stake, from: owner });
-                let id = await this.contract.computeId.call(exId, owner);
-                let market = await this.contract.getMarket.call(id);
-
-                assert.equal(market.data[1], maxRate);
-                assert.equal(market.data[4], stake);
-                assert.equal(market.data[5], COMMIT);
-
-                assert.equal(market.owner, owner);
-            });
-
-            it('should raise exception when market is already exists', async function (){
-                let tx = await this.contract.createMarket(exId, maxRate, { from: owner });
-                await exceptions.expectThrow(
-                    this.contract.createMarket(exId, maxRate, { from: owner }),
-                    exceptions.errTypes.revert,
-                    "Already exists"
+        context('compute ID', async function (){
+            it('should compute id', async function (){
+                let code = '0x1';
+                let id = await this.contract.computeId.call(code, owner);
+                let expected = web3.utils.keccak256(
+                    Buffer.concat([
+                        helpers.hexToBuffer(code, 32),
+                        helpers.hexToBuffer(owner, 20)
+                    ])
                 );
-            });
-
-            it('should raise exception when rate is too big', async function (){
-                await exceptions.expectThrow(
-                    this.contract.createMarket(exId, maxRate + 100, { from: owner }),
-                    exceptions.errTypes.revert,
-                    "Max rating is too big"
-                );
-            })
-
-            it('should emit Add admin event', async function (){
-                let id = await this.contract.computeId.call(exId, owner);
-                await events.inTransaction(
-                    this.contract.createMarket(exId, maxRate, { from: owner }),
-                    'MarketCreated',
-                    {
-                        marketCode: new BN(exId),
-                        marketId: id,
-                        owner: owner
-                    }
-                );
+                assert.equal(id, expected);
             });
         });
+
+        context('compute commitment', async function (){
+            it('should commitment', async function (){
+                let rate = '0x18';
+                let rand = web3.utils.randomHex(32);
+
+                let commitment = await this.contract.computeCommitment.call(rate, rand);
+                let expected = web3.utils.keccak256(
+                    Buffer.concat([
+                        helpers.hexToBuffer(rate, 32),
+                        helpers.hexToBuffer(rand, 32)
+                    ])
+                );
+                assert.equal(commitment, expected);
+            });
+        });
+
     });
+
 });
