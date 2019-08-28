@@ -4,8 +4,8 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract TrueStars {
 
     using SafeMath for uint;
-    enum Phases {NULL, COMMIT, REVEAL, WITHDRAW, DESTROY}
-    uint constant MAX_ALLOWED_RATE = 100;
+    enum Phases {NULL, COMMIT, REVEAL, WITHDRAW, DESTROYED}
+    uint constant MAX_ALLOWED_RATING = 100;
 
     struct Player {
         uint weight;
@@ -16,22 +16,23 @@ contract TrueStars {
 
     struct Market {
         mapping (address => Player) players;
-        uint8 maxRate;
-        uint8 winRate;
+		uint name;
+        uint8 maxRating;
+        uint8 winRating;
         uint8 winDistance;
         uint stake;
         address owner;
         Phases phase;
         uint totalVotes;
         uint totalWeights;
-        mapping (int => uint) totalWeightsByRate;
+        mapping (int => uint) totalWeightsByRating;
         uint totalWithdraw;
         uint totalWinWeight;
     }
     mapping (bytes32 => Market) private markets;
 
-    event MarketCreated(
-        uint indexed externalId,
+    event MarketCreated( 
+        uint indexed marketName,
         bytes32 indexed marketId,
         address indexed owner
     );
@@ -40,7 +41,7 @@ contract TrueStars {
 
     event WithdrawPhase (
         bytes32 indexed marketId,
-        uint8 winningRate,
+        uint8 winningRating,
         uint8 winDistance,
         uint totalPrize,
         address indexed owner
@@ -98,41 +99,44 @@ contract TrueStars {
 
     /**
     * @dev create Market.
-    * @param _id market ID
-    * @param _maxRate max possible rating for this market.
+    * @param _name market name (represented as a numnber).
+    * @param _maxRating max possible rating for this market.
     */
-    function createMarket(uint _id, uint8 _maxRate)
+    function createMarket(uint _name, uint8 _maxRating)
         public
         payable
         returns (bytes32)
     {
         Market memory market;
-        bytes32 id = computeId(_id, msg.sender);
+        bytes32 id = computeId(_name, msg.sender);
         require(markets[id].phase == Phases.NULL, "Already exists");
-        require(_maxRate <= MAX_ALLOWED_RATE, "Max rate is too big");
+        require(_maxRating <= MAX_ALLOWED_RATING, "Max rating is too big");
 
-        market.maxRate = _maxRate;
+		market.name = _name
+        market.maxRating = _maxRating;
         market.stake = msg.value;
         market.owner = msg.sender;
         market.phase = Phases.COMMIT;
         markets[id] = market;
 
-        emit MarketCreated(_id, id, msg.sender);
+        emit MarketCreated(_name, id, msg.sender);
         return id;
     }
 
     /**
-    * @dev generate ID.
-    * @param _id market ID
+    * @dev map market name to market ID. (The mapping depends on who the owner of the market is.)
+    * @param _name market name
+    * @param _owner Owner of the market
     */
-    function computeId(uint _id, address owner)
+    function computeId(uint _name, address _owner)
         public
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked(_id, owner));
+        return keccak256(abi.encodePacked(_name, _owner));
     }
-
+	
+	
     /**
     * @dev Change state to reveal
     * @param _id market ID
@@ -161,24 +165,24 @@ contract TrueStars {
         markets[_id].phase =  Phases.WITHDRAW;
 
         if (markets[_id].totalWeights > 0) {
-            markets[_id].winRate = uint8((1 + 2 * markets[_id].totalVotes /  markets[_id].totalWeights) / 2);
-            for (int i=0; i<=markets[_id].maxRate; i++) {
+            markets[_id].winRating = uint8((1 + 2 * markets[_id].totalVotes /  markets[_id].totalWeights) / 2);
+            for (int i=0; i<=markets[_id].maxRating; i++) {
                 if (
-                    (markets[_id].totalWeightsByRate[markets[_id].winRate + i] > 0 ) ||
-                    (markets[_id].totalWeightsByRate[markets[_id].winRate - i] > 0 )
+                    (markets[_id].totalWeightsByRating[markets[_id].winRating + i] > 0 ) ||
+                    (markets[_id].totalWeightsByRating[markets[_id].winRating - i] > 0 )
                 ) {
                     markets[_id].winDistance = uint8(i);
                     break;
                 }
             }
             markets[_id].totalWinWeight =
-                markets[_id].totalWeightsByRate[markets[_id].winRate + markets[_id].winDistance] +
-                markets[_id].totalWeightsByRate[markets[_id].winRate - markets[_id].winDistance];
+                markets[_id].totalWeightsByRating[markets[_id].winRating + markets[_id].winDistance] +
+                markets[_id].totalWeightsByRating[markets[_id].winRating - markets[_id].winDistance];
         }
 
         emit WithdrawPhase(
             _id,
-            markets[_id].winRate,
+            markets[_id].winRating,
             markets[_id].winDistance,
             markets[_id].stake,
             msg.sender);
@@ -195,7 +199,7 @@ contract TrueStars {
         onlyWithdraw(_id)
         returns (bool)
     {
-        markets[_id].phase = Phases.DESTROY;
+        markets[_id].phase = Phases.DESTROYED;
         emit MarketDestroyed(_id, msg.sender);
         msg.sender.transfer(markets[_id].stake - markets[_id].totalWithdraw);
         return true;
@@ -230,7 +234,7 @@ contract TrueStars {
     /**
     * @dev Add a player to the market
     * @param _id market ID
-    * @param _player palyer address
+    * @param _player player's address
     * @param _weight player's weight
     */
     function registerPlayer(bytes32 _id, address _player, uint _weight)
@@ -249,10 +253,10 @@ contract TrueStars {
 
     /**
     * @dev Add vote commitment
-    * @param _commitment hashed vote
     * @param _id market ID
+    * @param _commitment hashed vote
     */
-    function commit(bytes32 _commitment, bytes32 _id)
+    function commit(bytes32 _id, bytes32 _commitment)
         public
         onlyCommit(_id)
         returns (bool)
@@ -261,20 +265,34 @@ contract TrueStars {
         return true;
     }
 
+	/**
+    * @dev map rating and salt to a commitment. Used for commit-reveal mechanism.
+    * @param _rating rating (range 1 to maxRating)
+    * @param _salt Randomly-generated salt
+    */
+    function computeCommitment(uint _rating, uint _salt)
+        public
+        pure
+        returns (bytes32)
+    {
+        return keccak256(abi.encodePacked(_rating, _salt));	
+    }
+
+	
     /**
     * @dev Reveal your vote
-    * @param _rate hashed vote
-    * @param _random hashed vote
     * @param _id market ID
+    * @param _rating vote
+    * @param _salt the random salt that was used when generating the commitment
     */
-    function reveal(uint _rate, uint _random, bytes32 _id)
+    function reveal(bytes32 _id, uint _rating, uint _salt)
         public
         onlyReveal(_id)
         returns (bool)
     {
         address player = msg.sender;
         require(
-            keccak256(abi.encodePacked(_rate, _random)) == markets[_id].players[player].commitment &&
+            computeCommitment(_rating, _salt) == markets[_id].players[player].commitment &&
             markets[_id].players[player].commitment != 0,
             "Invalid reveal"
         );
@@ -282,13 +300,13 @@ contract TrueStars {
             markets[_id].players[player].vote == 0,
             "Already revealed"
         );
-        require(_rate>=1 && _rate <= markets[_id].maxRate, "Invalid rate");
+        require(_rating >= 1 && _rating <= markets[_id].maxRating, "Invalid rating");
 
-        markets[_id].players[player].vote = _rate;
+        markets[_id].players[player].vote = _rating;
         uint weight = markets[_id].players[player].weight;
-        markets[_id].totalVotes.add(_rate * weight);
+        markets[_id].totalVotes.add(_rating * weight);
         markets[_id].totalWeights.add(weight);
-        markets[_id].totalWeightsByRate[int(_rate)].add(weight);
+        markets[_id].totalWeightsByRating[int(_rating)].add(weight);
 
         return true;
     }
@@ -308,8 +326,8 @@ contract TrueStars {
             "Zero weight"
         );
         require(
-            int(markets[_id].players[player].vote) == int(markets[_id].winRate) + int(markets[_id].winDistance) ||
-            int(markets[_id].players[player].vote) == int(markets[_id].winRate) - int(markets[_id].winDistance),
+            int(markets[_id].players[player].vote) == int(markets[_id].winRating) + int(markets[_id].winDistance) ||
+            int(markets[_id].players[player].vote) == int(markets[_id].winRating) - int(markets[_id].winDistance),
             "Are not a winner"
         );
         require(
@@ -338,8 +356,9 @@ contract TrueStars {
         public
         view
         returns (
-            uint8 maxRate,
-            uint8 winRate,
+            uint name,
+			uint8 maxRating,
+            uint8 winRating,
             uint8 winDistance,
             uint stake,
             address owner,
@@ -348,8 +367,9 @@ contract TrueStars {
         )
     {
         return (
-            markets[_id].maxRate,
-            markets[_id].winRate,
+            markets[_id].name,
+            markets[_id].maxRating,
+            markets[_id].winRating,
             markets[_id].winDistance,
             markets[_id].stake,
             markets[_id].owner,
@@ -392,8 +412,8 @@ contract TrueStars {
         returns (bool)
     {
         if(
-            int(markets[_id].players[_player].vote) == int(markets[_id].winRate) + int(markets[_id].winDistance) ||
-            int(markets[_id].players[_player].vote) == int(markets[_id].winRate) - int(markets[_id].winDistance)
+            int(markets[_id].players[_player].vote) == int(markets[_id].winRating) + int(markets[_id].winDistance) ||
+            int(markets[_id].players[_player].vote) == int(markets[_id].winRating) - int(markets[_id].winDistance)
         ) {
             return true;
         }
