@@ -39,7 +39,7 @@ contract TrueStars {
         address indexed owner
     );
 
-    event Debug (bytes32 indexed hash, bytes data);
+    /* event Debug (bytes32 indexed hash, bytes data); */
 
     event RevealPhase (bytes32 indexed marketId, address indexed owner);
 
@@ -136,7 +136,6 @@ contract TrueStars {
         public
         returns (bytes32)
     {
-        emit Debug(keccak256(abi.encodePacked(_code, _owner)), abi.encodePacked(_code, _owner));
         return keccak256(abi.encodePacked(_code, _owner));
     }
 
@@ -355,8 +354,11 @@ contract TrueStars {
     /**
     * @dev Return current market state
     * @param _id market ID
-    * @return uint[9] (code, maxRating, winRating, winDistance, stake, phase,
-    * totalVotes, totalWeights, totalWithdraw, totalWinWeight)
+    * @return uint[9] (
+    *   0:code, 1:maxRating, 2:winRating,
+    *   3:winDistance, 4:stake, 5:phase,
+    *   6:totalVotes, 7:totalWeights, 8:totalWithdraw, 9:totalWinWeight
+    * )
     * @return owner address
     */
     function getMarket(bytes32 _id)
