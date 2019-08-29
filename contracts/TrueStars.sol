@@ -5,13 +5,15 @@ contract TrueStars {
 
     using SafeMath for uint;
     using SafeMath for uint32;
+    using SafeMath for uint64;
+
     enum Phases {NULL, COMMIT, REVEAL, WITHDRAW, DESTROYED}
     uint constant MAX_ALLOWED_RATING = 100;
 
     struct Player {
-        uint weight;
+        uint16 vote;
+        uint16 weight;
         bytes32 commitment;
-        uint vote;
         bool withdraw;
     }
 
@@ -19,8 +21,8 @@ contract TrueStars {
         uint8 maxRating;
         uint8 winRating;
         uint8 winDistance;
-        uint32 totalVotes;
         uint32 code;
+        uint64 totalVotes;
         Phases phase;
         uint stake;
         uint totalWeights;
@@ -209,18 +211,6 @@ contract TrueStars {
     }
 
     /**
-    * @dev Return current market state
-    * @param _id market ID
-    */
-    function getPhase(bytes32 _id)
-        public
-        view
-        returns (Phases)
-    {
-        return markets[_id].phase;
-    }
-
-    /**
     * @dev Add fund to the market
     * @param _id market ID
     */
@@ -230,7 +220,7 @@ contract TrueStars {
         payable
         returns (bool)
     {
-        markets[_id].stake.add(msg.value);
+        markets[_id].stake = markets[_id].stake.add(msg.value);
         return true;
     }
 
@@ -240,17 +230,13 @@ contract TrueStars {
     * @param _player player's address
     * @param _weight player's weight
     */
-    function registerPlayer(bytes32 _id, address _player, uint _weight)
+    function registerPlayer(bytes32 _id, address _player, uint16 _weight)
         public
         onlyOwner(_id)
-        onlyBeforeWithdraw(_id)
+        onlyCommit(_id)
         returns (bool)
     {
-        if (markets[_id].players[_player].weight != 0) {
-            markets[_id].players[_player].weight = _weight;
-        } else {
-            markets[_id].players[_player] = Player(_weight, 0, 0, false);
-        }
+        markets[_id].players[_player].weight = _weight;
         return true;
     }
 
@@ -273,7 +259,7 @@ contract TrueStars {
     * @param _rating rating (range 1 to maxRating)
     * @param _salt Randomly-generated salt
     */
-    function computeCommitment(uint _rating, uint _salt)
+    function computeCommitment(uint16 _rating, uint _salt)
         public
         pure
         returns (bytes32)
@@ -288,28 +274,33 @@ contract TrueStars {
     * @param _rating vote
     * @param _salt the random salt that was used when generating the commitment
     */
-    function reveal(bytes32 _id, uint _rating, uint _salt)
+    function reveal(bytes32 _id, uint16 _rating, uint _salt)
         public
         onlyReveal(_id)
         returns (bool)
     {
         address player = msg.sender;
+        require(_rating >= 1 && _rating <= markets[_id].maxRating, "Invalid rating");
+
         require(
             computeCommitment(_rating, _salt) == markets[_id].players[player].commitment &&
             markets[_id].players[player].commitment != 0,
             "Invalid reveal"
         );
+
         require(
             markets[_id].players[player].vote == 0,
             "Already revealed"
         );
-        require(_rating >= 1 && _rating <= markets[_id].maxRating, "Invalid rating");
 
         markets[_id].players[player].vote = _rating;
-        uint weight = markets[_id].players[player].weight;
-        markets[_id].totalVotes.add(_rating * weight);
-        markets[_id].totalWeights.add(weight);
-        markets[_id].totalWeightsByRating[int(_rating)].add(weight);
+        uint16 weight = markets[_id].players[player].weight;
+
+        markets[_id].totalVotes = uint64(markets[_id].totalVotes.add(_rating * weight));
+
+        markets[_id].totalWeights = markets[_id].totalWeights.add(weight);
+        int rating = int(_rating);
+        markets[_id].totalWeightsByRating[rating] = markets[_id].totalWeightsByRating[rating].add(weight);
 
         return true;
     }
@@ -329,9 +320,8 @@ contract TrueStars {
             "Zero weight"
         );
         require(
-            int(markets[_id].players[player].vote) == int(markets[_id].winRating) + int(markets[_id].winDistance) ||
-            int(markets[_id].players[player].vote) == int(markets[_id].winRating) - int(markets[_id].winDistance),
-            "Are not a winner"
+            isWinner(_id, player),
+            "You are not a winner"
         );
         require(
             markets[_id].players[player].withdraw == false,
@@ -345,10 +335,24 @@ contract TrueStars {
 
         markets[_id].players[player].withdraw = true;
         uint prize = markets[_id].players[player].weight*markets[_id].stake / markets[_id].totalWinWeight;
-        markets[_id].totalWithdraw.add(prize);
+        markets[_id].totalWithdraw = markets[_id].totalWithdraw.add(prize);
         assert(markets[_id].totalWithdraw <= markets[_id].stake);
         player.transfer(prize);
         return true;
+    }
+
+    /**
+    * @dev Return total weights by rating
+    * @param _id market ID
+    * @param _rate rate value
+    * @return uint
+    */
+    function getTotalWeightsByRating(bytes32 _id, int _rate)
+        public
+        view
+        returns (uint rate)
+    {
+        return markets[_id].totalWeightsByRating[_rate];
     }
 
     /**
