@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {NotificationManager} from 'react-notifications';
 import {withRouter} from "react-router-dom"
 import GeneralService from "../../services/GeneralService";
+import FormComponent from "../General/FormComponent";
 
-class MarketAdd extends Component {
+class MarketAdd extends FormComponent {
     constructor(props) {
         super(props);
 
@@ -13,11 +14,13 @@ class MarketAdd extends Component {
             submit: props.submit,
             invalid: {
                 id: false,
-                maxRate: false
+                maxRating: false
             }
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.handleInputChange = this.handleInputChange('market');
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
@@ -49,17 +52,17 @@ class MarketAdd extends Component {
         return false;
     }
 
-    showInvalidData(fields, messages) {
-        var invalid = {...this.state.invalid};
-        fields.map((field) => {
-            invalid[field] = true;
-            return invalid[field];
-        });
-        this.setState({
-            invalid: invalid
-        });
-        messages.map(message => NotificationManager.error(message, '', 8000));
-    }
+    // showInvalidData(fields, messages) {
+    //     var invalid = {...this.state.invalid};
+    //     fields.map((field) => {
+    //         invalid[field] = true;
+    //         return invalid[field];
+    //     });
+    //     this.setState({
+    //         invalid: invalid
+    //     });
+    //     messages.map(message => NotificationManager.error(message, '', 8000));
+    // }
 
     checkValidation() {
         return new Promise((resolve, reject) => {
@@ -77,15 +80,15 @@ class MarketAdd extends Component {
                 messages.push('Internal ID should be greatest than zero.');
                 result = false;
             }
-            if ((this.state.market.maxRate === "") || (this.state.market.maxRate === 0)) {
-                fields.push('maxRate');
+            if ((this.state.market.maxRating === "") || (this.state.market.maxRating === 0)) {
+                fields.push('maxRating');
                 messages.push('Maximum rate is required field and should be greatest than zero.');
                 result = false;
             }
 
-            if (this.state.market.maxRate > 100) {
-                fields.push('maxRate');
-                messages.push('Maximum rate is 100.');
+            if (this.state.market.maxRating > 100) {
+                fields.push('maxRating');
+                messages.push('Maximum of rate is 100.');
                 result = false;
             }
 
@@ -95,21 +98,21 @@ class MarketAdd extends Component {
         });
     }
 
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
-        var market = {...this.state.market};
-        market[name] = value;
-
-        var invalid = {...this.state.invalid};
-        invalid[name] = false;
-        this.setState({
-            market: market,
-            invalid: invalid
-        });
-    }
+    // handleInputChange(event) {
+    //     const target = event.target;
+    //     const value = target.type === 'checkbox' ? target.checked : target.value;
+    //     const name = target.name;
+    //
+    //     var market = {...this.state.market};
+    //     market[name] = value;
+    //
+    //     var invalid = {...this.state.invalid};
+    //     invalid[name] = false;
+    //     this.setState({
+    //         market: market,
+    //         invalid: invalid
+    //     });
+    // }
 
     render() {
         console.log('FORM STATE: ', this.state);
@@ -131,13 +134,13 @@ class MarketAdd extends Component {
                             </div>
 
                             <div className="pure-control-group">
-                                <label htmlFor="maxRate">Maximum Rate <span className="required">*</span></label>
-                                <input name="maxRate"
+                                <label htmlFor="maxRating">Max rating <span className="required">*</span></label>
+                                <input name="maxRating"
                                        type="text"
-                                       placeholder="Maximum rate"
-                                       value={this.state.market.maxRate}
+                                       placeholder="Max rating"
+                                       value={this.state.market.maxRating}
                                        onChange={this.handleInputChange}
-                                       className={this.state.invalid.maxRate ? "field-error" :  ""}
+                                       className={this.state.invalid.maxRating ? "field-error" :  ""}
                                 />
                             </div>
 

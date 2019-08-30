@@ -1,7 +1,4 @@
 import React, {Component} from 'react';
-import {NotificationManager} from 'react-notifications';
-import {withRouter} from "react-router-dom"
-import GeneralService from "../../services/GeneralService";
 import { Link } from 'react-router-dom';
 
 class MarketFind extends Component {
@@ -10,7 +7,6 @@ class MarketFind extends Component {
 
         this.state = {
             marketId: props.id,
-
             marketHash: props.marketHash
         };
 
@@ -20,11 +16,10 @@ class MarketFind extends Component {
     handleIdChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
 
         var state = {...this.state};
-        state['id'] = value;
-        state['marketHash'] = '/marketowner/market/view/'+value;
+        state.id = value;
+        state.marketHash = '/marketowner/market/view/'+value;
 
         this.setState(state);
     }
@@ -42,7 +37,7 @@ class MarketFind extends Component {
                                 <input name="id"
                                        type="text"
                                        placeholder="Internal id"
-                                       value={this.state.id}
+                                       // value={this.state.id}
                                        onChange={this.handleIdChange}
 
                                 />&nbsp;
@@ -56,4 +51,4 @@ class MarketFind extends Component {
     }
 }
 
-export default withRouter(MarketFind);
+export default MarketFind;
