@@ -19,6 +19,9 @@ import PageGeneralIndex from "./components/Pages/General/PageGeneralIndex";
 import PagePlayerIndex from "./components/Pages/Player/PagePlayerIndex";
 import PageEmpty from "./components/Pages/PageEmpty";
 import { Link } from 'react-router-dom';
+import PageMarketOwnerMarketNew from "./components/Pages/MarketOwner/PageMarketOwnerMarketNew";
+import PageMarketOwnerMarketFind from "./components/Pages/MarketOwner/PageMarketOwnerMarketFind";
+import PageMarketOwnerMarketView from "./components/Pages/MarketOwner/PageMarketOwnerMarketView";
 
 class App extends Component {
     state = {
@@ -116,6 +119,16 @@ class App extends Component {
                             <Router>
                                 <main className="container">
                                     <div className='sub-container'>
+
+                                        <div className="pure-g">
+                                            <div className='pure-u-1-1'>
+                                                <center><h1>True Stars</h1> market page</center>
+                                                <div>
+                                                    <Link to="/marketowner" className="pure-button">Market owner section</Link>&nbsp;
+                                                    <Link to="/player" className="pure-button">Player section</Link>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <Switch>
                                             <Route path='/' exact render={(props) => (
                                                 <PageGeneralIndex />
@@ -123,11 +136,11 @@ class App extends Component {
 
                                             <Route path='/marketowner' component={PageMarketOwnerIndex}/>
                                             <Route path='/player' component={PagePlayerIndex}/>
-
-
                                             <Route render={(props) => (
                                                 <PageEmpty text="Error: 404. Page not found."/>
                                             )}/>
+
+
                                         </Switch>
                                     </div>
                                 </main>

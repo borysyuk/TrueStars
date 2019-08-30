@@ -8,13 +8,19 @@ class MarketOwnerService extends BlockchainService {
     convertMarket(solidityResult) {
         console.log("solidityResult", solidityResult);
         var info = this.newMarketInfo();
-        info.maxRate = parseInt(solidityResult[0], 10);
-        info.winRate = parseInt(solidityResult[1], 10);
-        info.winDistance = parseInt(solidityResult[2], 10);
-        info.stake = parseInt(solidityResult[3],10);
-        info.owner = solidityResult[4];
-        info.phase = parseInt(solidityResult[5], 10);
-        info.totalVotes = parseInt(solidityResult[6], 10);
+        info.id = parseInt(solidityResult[0][0], 10);
+        info.maxRating = parseInt(solidityResult[0][1], 10);
+        info.winRating = parseInt(solidityResult[0][2], 10);
+        info.winDistance = parseInt(solidityResult[0][3], 10);
+        info.stake = parseInt(solidityResult[0][4], 10);
+        info.phase = parseInt(solidityResult[0][5], 10);
+        info.totalVotes = parseInt(solidityResult[0][6], 10);
+
+        info.totalWeights = parseInt(solidityResult[0][7], 10);
+        info.totalWithdraw = parseInt(solidityResult[0][8], 10);
+        info.totalWinWeight = parseInt(solidityResult[0][9], 10);
+
+        info.owner = solidityResult[1];
 
         return info;
     }
@@ -22,19 +28,30 @@ class MarketOwnerService extends BlockchainService {
     newEntity() {
         return {
             id: 1,
-            maxRate: 10,
+            maxRating: 10,
         }
     }
 
     newMarketInfo() {
         return {
-            maxRate: 0,
-            winRate: 0,
+            id: 0,
+            maxRating: 0,
+            winRating: 0,
             winDistance: 0,
             stake: 0,
             owner: "",
             phase: 0,
-            totalVotes: 0
+            totalVotes: 0,
+            totalWeights: 0,
+            totalWithdraw: 0,
+            totalWinWeight: 0
+        }
+    }
+
+    newPlayer() {
+        return {
+            address: "",
+            weight: 100,
         }
     }
 
@@ -43,7 +60,7 @@ class MarketOwnerService extends BlockchainService {
         return this.sendToBlockchain(
             AppStorageService.mainContract.methods.createMarket(
                 market.id,
-                market.maxRate
+                market.maxRating
             ),
             {from: AppStorageService.currentAccount}
         );
@@ -55,19 +72,42 @@ class MarketOwnerService extends BlockchainService {
         return this.addMarketToBlockchain(market);
     }
 
+    addPlayerToMarketToBlockchain(id, playerAddress, playerWeight) {
+        return this.computeHash(id).then(hash => {
+            return this.sendToBlockchain(
+                AppStorageService.mainContract.methods.registerPlayer(
+                    hash,
+                    playerAddress,
+                    playerWeight
+                ),
+                {from: AppStorageService.currentAccount}
+            );
+        });
+    }
+
+    addPlayerToMarket(id, playerAddress, playerWeight) {
+        console.log('test addPlayerToMarket', id, playerAddress, playerWeight);
+        return this.addPlayerToMarketToBlockchain(id, playerAddress, playerWeight);
+    }
+
     computeHash(id) {
         console.log('AppStorageService.currentAccount', AppStorageService.currentAccount);
-        return AppStorageService.mainContract.methods.computeId(parseInt(id, 10), AppStorageService.currentAccount).call({from: AppStorageService.currentAccount});
+        return AppStorageService.mainContract.methods.computeId(
+            parseInt(id, 10),
+            AppStorageService.currentAccount
+        ).call({from: AppStorageService.currentAccount});
     }
 
     getMarket(id) {
         console.log("id = ", id);
-        console.log("this", this.computeHash);
         return this.computeHash(id).then(hash => {
             console.log("hash", hash);
             return AppStorageService.mainContract.methods.getMarket(hash).call({from: AppStorageService.currentAccount}).then(result => {
+                console.log("getMarket", result);
                 return this.convertMarket(result);
-            }).catch(console.log)
+            }).catch(error => {
+                console.log('getMarketERROR! ', error);
+            })
         })
 
     }
@@ -82,11 +122,21 @@ class MarketOwnerService extends BlockchainService {
     }
 
     switchToWithdraw(id) {
-
+        return this.computeHash(id).then(hash => {
+            this.sendToBlockchain(
+                AppStorageService.mainContract.methods.startWithdraw(hash),
+                {from: AppStorageService.currentAccount}
+            );
+        });
     }
 
     switchToDestroy(id) {
-
+        return this.computeHash(id).then(hash => {
+            this.sendToBlockchain(
+                AppStorageService.mainContract.methods.destroyMarket(hash),
+                {from: AppStorageService.currentAccount}
+            );
+        });
     }
 }
 

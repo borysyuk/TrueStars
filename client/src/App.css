@@ -128,3 +128,26 @@
         transform: scale(1.5);
     }
 }
+
+.field-error,
+input[class=field-error]:-webkit-autofill,
+input[class=field-error]:-webkit-autofill:hover,
+input[class=field-error]:-webkit-autofill:focus,
+input[class=field-error]:-webkit-autofill:active
+{
+    background: rgb(255, 155, 155);
+    -webkit-box-shadow: 0 0 0 30px rgb(255, 155, 155) inset !important;
+}
+
+/* Change the white to any color ;) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+.error-panel {
+    padding: 10px;
+    background: rgb(255, 155, 155);
+}

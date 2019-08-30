@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import {Link} from 'react-router-dom';
-import MarketFind from "../../Market/MarketFind";
 import MarketOwnerService from "../../../services/MarketOwnerService";
 import MarketView from "../../Market/MarketView"
+import MarketRegisterPlayer from "../../Market/MarketRegisterPlayer";
 
 class PageMarketOwnerView extends Component {
 
@@ -19,6 +18,7 @@ class PageMarketOwnerView extends Component {
     }
 
     componentWillMount() {
+        console.log(this.state);
         MarketOwnerService.getMarket(this.state.id).then(marketInfo => {
             console.log("marketInfo", marketInfo);
             if (marketInfo !== null) {
@@ -32,6 +32,7 @@ class PageMarketOwnerView extends Component {
             }
 
         }).catch(error => {
+            console.log("market error", error);
             this.setState({
                 loading: false,
                 error: "Error: Cannot load market.",
@@ -41,13 +42,21 @@ class PageMarketOwnerView extends Component {
 
     render() {
         return (
-            <div className="pure-g generalPage">
+            <div className="pure-g">
                 <div className='pure-u-1-1'>
-                    <h2>Market Info</h2>
-                    <MarketView marketInfo={this.state.marketInfo} id={this.state.id} />
-
+                    <h2>Market Info!</h2>
+                    <div className="pure-g">
+                        <div className='pure-u-1-2'>
+                            <MarketView marketInfo={this.state.marketInfo} id={this.state.id}/>
+                        </div>
+                        {
+                            this.state.marketInfo.phase === 1 &&
+                            <div className='pure-u-1-2'>
+                                <MarketRegisterPlayer id={this.state.id} submit={MarketOwnerService.addPlayerToMarket.bind(MarketOwnerService)}/>
+                            </div>
+                        }
+                    </div>
                 </div>
-
             </div>
         )
     }

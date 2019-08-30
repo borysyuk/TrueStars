@@ -11,13 +11,10 @@ class PageMarketOwnerIndex extends Component {
 
     render() {
         return (
-            <div className="pure-g generalPage">
-                <div className='pure-u-1-1'>
-                    <center><h1>True Stars</h1> market page</center>
-                    <div>
-                        <Link to='/marketowner/market/new' className="pure-button">Create new market</Link>&nbsp;
-                        <Link to='/marketowner/market/change' className="pure-button">Find market</Link>&nbsp;
-                    </div>
+            <div>
+                <div style={{margin: "10px"}}>
+                    <Link to='/marketowner/market/new' className="pure-button">Create new market</Link>&nbsp;
+                    <Link to='/marketowner/market/change' className="pure-button">Find market</Link>&nbsp;
                 </div>
 
                 <Switch>
@@ -25,7 +22,6 @@ class PageMarketOwnerIndex extends Component {
                     <Route path='/marketowner/market/change' exact component={PageMarketOwnerMarketFind}/>
                     <Route path='/marketowner/market/view/:id' exact component={PageMarketOwnerMarketView}/>
                 </Switch>
-
             </div>
         )
     }
