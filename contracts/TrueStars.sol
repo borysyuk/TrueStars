@@ -136,6 +136,7 @@ contract TrueStars {
     */
     function computeId(uint _code, address _owner)
         public
+        pure
         returns (bytes32)
     {
         return keccak256(abi.encodePacked(_code, _owner));
@@ -157,6 +158,22 @@ contract TrueStars {
         return true;
     }
 
+
+    /**
+    * @dev Compute average emulate math round for the result
+    * @param _votes votes
+    * @param _weights weights
+    * @return uint
+    */
+    function computeAverage(uint _votes, uint _weights)
+        public
+        pure
+        returns (uint)
+    {
+        require(_weights > 0, "Weights can't be 0");
+        return (1 + 2 * _votes / _weights) / 2;
+    }
+
     /**
     * @dev Change state to withdraw
     * @param _id market ID
@@ -170,7 +187,7 @@ contract TrueStars {
         markets[_id].phase =  Phases.WITHDRAW;
 
         if (markets[_id].totalWeights > 0) {
-            markets[_id].winRating = uint8((1 + 2 * markets[_id].totalVotes /  markets[_id].totalWeights) / 2);
+            markets[_id].winRating = uint8(computeAverage(markets[_id].totalVotes, markets[_id].totalWeights));
             for (int i=0; i<=markets[_id].maxRating; i++) {
                 if (
                     (markets[_id].totalWeightsByRating[markets[_id].winRating + i] > 0 ) ||
