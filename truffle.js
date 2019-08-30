@@ -63,12 +63,12 @@ module.exports = {
             gasPrice: 0x01      // <-- Use this low gas price
         },
     },
-    mocha: {
-        reporter: 'eth-gas-reporter',
-        reporterOptions : {
-            gasPrice: 10
-        }
-    },
+    // mocha: {
+    //     reporter: 'eth-gas-reporter',
+    //     reporterOptions : {
+    //         gasPrice: 10
+    //     }
+    // },
 
     compilers: {
         solc: {
