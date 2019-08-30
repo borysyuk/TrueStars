@@ -1049,6 +1049,7 @@ contract("TrueStars", function([
                 let allPlayers = players.concat(winners);
                 let rateInfo = computeRate(allPlayers);
                 assert.equal(info.owner, owner);
+                assert.equal(info.id, id);
                 assert.equal(info.data[1], MAX_RATE);
                 assert.equal(info.data[2], rateInfo.rate);
                 assert.equal(info.data[3], rateInfo.distance);

@@ -387,6 +387,7 @@ contract TrueStars {
         view
         returns (
             uint[10] memory data,
+            bytes32 id,
             address owner
         )
     {
@@ -403,6 +404,7 @@ contract TrueStars {
 
         return (
             data,
+            _id,
             markets[_id].owner
         );
     }
