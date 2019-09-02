@@ -20,7 +20,8 @@ class MarketOwnerService extends BlockchainService {
         info.totalWithdraw = parseInt(solidityResult[0][8], 10);
         info.totalWinWeight = parseInt(solidityResult[0][9], 10);
 
-        info.owner = solidityResult[1];
+        info.hash = solidityResult[1];
+        info.owner = solidityResult[2];
 
         return info;
     }
@@ -98,16 +99,20 @@ class MarketOwnerService extends BlockchainService {
         ).call({from: AppStorageService.currentAccount});
     }
 
+    getMarketByHash(hash) {
+        return AppStorageService.mainContract.methods.getMarket(hash).call({from: AppStorageService.currentAccount}).then(result => {
+            console.log("getMarket", result);
+            return this.convertMarket(result);
+        }).catch(error => {
+            console.log('getMarketERROR! ', error);
+        })
+    }
+
     getMarket(id) {
         console.log("id = ", id);
         return this.computeHash(id).then(hash => {
             console.log("hash", hash);
-            return AppStorageService.mainContract.methods.getMarket(hash).call({from: AppStorageService.currentAccount}).then(result => {
-                console.log("getMarket", result);
-                return this.convertMarket(result);
-            }).catch(error => {
-                console.log('getMarketERROR! ', error);
-            })
+            return this.getMarketByHash(hash);
         })
 
     }
