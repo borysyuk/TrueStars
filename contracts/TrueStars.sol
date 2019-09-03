@@ -197,9 +197,14 @@ contract TrueStars {
                     break;
                 }
             }
+
             markets[_id].totalWinWeight =
                 markets[_id].totalWeightsByRating[markets[_id].winRating + markets[_id].winDistance] +
                 markets[_id].totalWeightsByRating[markets[_id].winRating - markets[_id].winDistance];
+                
+            if (markets[_id].winDistance] == 0) {
+                markets[_id].totalWinWeight = markets[_id].totalWinWeight / 2;
+            }
         }
 
         emit WithdrawPhase(
