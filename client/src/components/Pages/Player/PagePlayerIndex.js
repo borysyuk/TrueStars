@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
+import {Switch, Route} from 'react-router-dom'
 import {withRouter} from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import Loading from "../../General/Loading";
+import PlayerMarketFind from "../../Player/PlayerMarketFind"
+import PagePlayerMarketView from "./PagePlayerMarketView";
 
 
 class PagePlayerIndex extends Component {
@@ -10,7 +11,11 @@ class PagePlayerIndex extends Component {
         return (
             <div className="pure-g generalPage">
                 <div className='pure-u-1-1'>
-                    <center><h1>True Stars</h1> player page</center>
+                    <PlayerMarketFind />
+
+                    <Switch>
+                        <Route path='/player/market/:hash' exact component={PagePlayerMarketView}/>
+                    </Switch>
 
                 </div>
             </div>
