@@ -2,8 +2,31 @@ import BlockchainService from "./BlockchainService";
 import AppStorageService from "./AppStorageService";
 
 
-class MarketOwnerService extends BlockchainService {
+function setLocalStorageObjectItem(key, value) {
+    if (value === undefined) {
+        localStorage.removeItem(key);
+    } else {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+}
 
+function getLocalStorageObjectItem(key) {
+    var json = localStorage.getItem(key);
+    if (json === undefined) {
+        return undefined;
+    }
+    return JSON.parse(json);
+}
+
+function generateLocalStorageGameKey(playerAddress, marketHash) {
+    return "gdfF05Bxzf5"+playerAddress+marketHash;
+}
+
+const hexToBuffer = function(web3, hex_input, length) {
+    return Buffer.from(web3.utils.padLeft(hex_input, length*2).slice(2), 'hex');
+}
+
+class MarketOwnerService extends BlockchainService {
 
     convertMarket(solidityResult) {
         console.log("solidityResult", solidityResult);
@@ -53,6 +76,14 @@ class MarketOwnerService extends BlockchainService {
         return {
             address: "",
             weight: 100,
+        }
+    }
+
+    newCommitment() {
+        return {
+            rate: 1,
+            salt: "",
+            commitment: ""
         }
     }
 
@@ -142,6 +173,51 @@ class MarketOwnerService extends BlockchainService {
                 {from: AppStorageService.currentAccount}
             );
         });
+    }
+
+    commit(marketHash, commitment) {
+        return this.sendToBlockchain(
+            AppStorageService.mainContract.methods.commit(marketHash, commitment),
+            {from: AppStorageService.currentAccount}
+        );
+    }
+
+    reveal(marketHash, rate, salt) {
+        return this.sendToBlockchain(
+            AppStorageService.mainContract.methods.reveal(marketHash, rate, salt),
+            {from: AppStorageService.currentAccount}
+        );
+    }
+
+    withdraw(marketHash) {
+        return this.sendToBlockchain(
+            AppStorageService.mainContract.methods.withdraw(marketHash),
+            {from: AppStorageService.currentAccount}
+        );
+    }
+
+    generateCommitment(rate) {
+        rate = AppStorageService.web3.utils.toHex(rate);
+        let rand = AppStorageService.web3.utils.randomHex(32);
+
+        let commitment = AppStorageService.web3.utils.keccak256(
+            Buffer.concat([
+                hexToBuffer(AppStorageService.web3, rate, 2),
+                hexToBuffer(AppStorageService.web3, rand, 32)
+            ])
+        );
+        return {
+            rand: rand,
+            commitment: commitment
+        }
+    }
+
+    saveCommitmentToLocalStorage(playerAddress, marketHash, rate, commitment, salt) {
+        setLocalStorageObjectItem(generateLocalStorageGameKey(playerAddress, marketHash), {rate: rate, commitment: commitment, salt: salt} );
+    }
+
+    loadCommitmentFromLocalStorage(playerAddress, marketHash) {
+        return getLocalStorageObjectItem(generateLocalStorageGameKey(playerAddress, marketHash));
     }
 }
 

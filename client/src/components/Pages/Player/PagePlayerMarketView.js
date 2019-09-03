@@ -4,6 +4,7 @@ import MarketOwnerService from "../../../services/MarketOwnerService";
 import MarketView from "../../Market/MarketView"
 import MarketRegisterPlayer from "../../Market/MarketRegisterPlayer";
 import { Link } from 'react-router-dom';
+import PlayerCommitForm from "../../Player/PlayerCommitForm";
 
 class PagePlayerMarketView extends Component {
 
@@ -53,7 +54,7 @@ class PagePlayerMarketView extends Component {
                         {
                             this.state.marketInfo.phase === 1 &&
                             <div className='pure-u-1-2'>
-                                Commit Form
+                                <PlayerCommitForm marketInfo={this.state.marketInfo} hash={this.state.hash}/>
                             </div>
                         }
                         {

@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import MarketOwnerService from "../../../services/MarketOwnerService";
 import MarketView from "../../Market/MarketView"
 import MarketRegisterPlayer from "../../Market/MarketRegisterPlayer";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import MarketChangePhase from "../../Market/MarketChangePhase";
 
 class PageMarketOwnerView extends Component {
@@ -52,15 +52,16 @@ class PageMarketOwnerView extends Component {
                             <MarketView marketInfo={this.state.marketInfo} id={this.state.id}/>
                             <MarketChangePhase marketInfo={this.state.marketInfo} id={this.state.id}/>
                         </div>
-                        {
-                            this.state.marketInfo.phase === 1 &&
-                            <div className='pure-u-1-2'>
-                                <MarketRegisterPlayer id={this.state.id} submit={MarketOwnerService.addPlayerToMarket.bind(MarketOwnerService)}/>
-                                <div style={{padding: "10px"}}>
-                                    <Link to={"/player/market/"+this.state.marketInfo.hash}>Go to player section</Link>
-                                </div>
+                        <div className='pure-u-1-2'>
+                            {
+                                this.state.marketInfo.phase === 1 &&
+                                <MarketRegisterPlayer id={this.state.id}
+                                                      submit={MarketOwnerService.addPlayerToMarket.bind(MarketOwnerService)}/>
+                            }
+                            <div style={{padding: "10px"}}>
+                                <Link to={"/player/market/" + this.state.marketInfo.hash}>Go to player section</Link>
                             </div>
-                        }
+                        </div>
                     </div>
                 </div>
             </div>

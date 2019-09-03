@@ -1,7 +1,7 @@
 const TrueStars = artifacts.require("./TrueStars.sol");
 const exceptions = require("./helpers/expectThrow");
 const events = require("./helpers/expectEvent");
-const helpers = require("./helpers/common");
+const helpers = require("./helpers/commitment");
 const TrueStarsABI = require("../client/src/contracts/TrueStars.json").abi;
 
 const BN = web3.utils.BN;
