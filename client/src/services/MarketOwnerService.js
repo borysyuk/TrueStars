@@ -3,6 +3,7 @@ import AppStorageService from "./AppStorageService";
 
 
 function setLocalStorageObjectItem(key, value) {
+    console.log("setKey", key,value);
     if (value === undefined) {
         localStorage.removeItem(key);
     } else {
@@ -11,7 +12,9 @@ function setLocalStorageObjectItem(key, value) {
 }
 
 function getLocalStorageObjectItem(key) {
+    console.log("getKey", key);
     var json = localStorage.getItem(key);
+    console.log(json);
     if (json === undefined) {
         return undefined;
     }
@@ -19,11 +22,11 @@ function getLocalStorageObjectItem(key) {
 }
 
 function generateLocalStorageGameKey(playerAddress, marketHash) {
-    return "gdfF05Bxzf5"+playerAddress+marketHash;
+    return "gdfF05Bxzf5" + playerAddress + marketHash;
 }
 
-const hexToBuffer = function(web3, hex_input, length) {
-    return Buffer.from(web3.utils.padLeft(hex_input, length*2).slice(2), 'hex');
+const hexToBuffer = function (web3, hex_input, length) {
+    return Buffer.from(web3.utils.padLeft(hex_input, length * 2).slice(2), 'hex');
 }
 
 class MarketOwnerService extends BlockchainService {
@@ -213,7 +216,9 @@ class MarketOwnerService extends BlockchainService {
     }
 
     saveCommitmentToLocalStorage(playerAddress, marketHash, rate, commitment, salt) {
-        setLocalStorageObjectItem(generateLocalStorageGameKey(playerAddress, marketHash), {rate: rate, commitment: commitment, salt: salt} );
+        setLocalStorageObjectItem(
+            generateLocalStorageGameKey(playerAddress, marketHash),
+            {rate: rate, commitment: commitment, salt: salt});
     }
 
     loadCommitmentFromLocalStorage(playerAddress, marketHash) {

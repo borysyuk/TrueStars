@@ -32,7 +32,7 @@ class PlayerCommitForm extends FormComponent {
                 this.props.hash,
                 this.state.game.rate,
                 result.commitment,
-                result.salt
+                result.rand
             );
             this.setState({game: MarketOwnerService.newCommitment()});
         }).catch(error => {
