@@ -76,11 +76,12 @@ contract("TrueStars", function([
                 break;
             }
         }
-
+        let winWeight = (weights[rate+distance] || 0) + (weights[rate-distance] || 0);
+        winWeight = (distance) ? winWeight : winWeight/2;
         return {
             rate: rate,
             distance: distance,
-            totalWinWeight: (weights[rate+distance] || 0) + (weights[rate-distance] || 0)
+            totalWinWeight: winWeight
         }
     }
 
@@ -294,7 +295,18 @@ contract("TrueStars", function([
 
                     market = await this.contract.getMarket.call(id);
                     assert.equal(market.data[9], rateInfo.totalWinWeight);
-                })
+                });
+
+                it('should set correct totalWinWeight if distance is 0', async function() {
+                    let rateInfo = computeRate(winners);
+                    let market = await this.contract.getMarket.call(id);
+                    assert.equal(market.data[9], 0);
+
+                    let tx = await this.contract.startWithdraw(id, {from: owner});
+
+                    market = await this.contract.getMarket.call(id);
+                    assert.equal(market.data[9], rateInfo.totalWinWeight);
+                });
 
                 it('should emit WithdrawPhase', async function() {
                     let rateInfo = computeRate(players.concat(winners));
@@ -1073,7 +1085,6 @@ contract("TrueStars", function([
                 assert.equal(info.data[9].toString(), rateInfo.totalWinWeight);
             });
         });
-
 
         context('get market weights for ratings', async function() {
             let stake = web3.utils.toWei('100', 'gwei');
