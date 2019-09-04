@@ -56,6 +56,7 @@ class MarketOwnerService extends BlockchainService {
         return {
             id: 1,
             maxRating: 10,
+            stake: 0,
         }
     }
 
@@ -97,7 +98,7 @@ class MarketOwnerService extends BlockchainService {
                 market.id,
                 market.maxRating
             ),
-            {from: AppStorageService.currentAccount}
+            {from: AppStorageService.currentAccount, value: AppStorageService.web3.utils.toWei(market.stake, 'ether')}
         );
     }
 
@@ -222,7 +223,11 @@ class MarketOwnerService extends BlockchainService {
     }
 
     loadCommitmentFromLocalStorage(playerAddress, marketHash) {
-        return getLocalStorageObjectItem(generateLocalStorageGameKey(playerAddress, marketHash));
+        var result = getLocalStorageObjectItem(generateLocalStorageGameKey(playerAddress, marketHash));
+        if (!result) {
+            result = this.newCommitment();
+        }
+        return result;
     }
 }
 

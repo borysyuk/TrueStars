@@ -52,18 +52,6 @@ class MarketAdd extends FormComponent {
         return false;
     }
 
-    // showInvalidData(fields, messages) {
-    //     var invalid = {...this.state.invalid};
-    //     fields.map((field) => {
-    //         invalid[field] = true;
-    //         return invalid[field];
-    //     });
-    //     this.setState({
-    //         invalid: invalid
-    //     });
-    //     messages.map(message => NotificationManager.error(message, '', 8000));
-    // }
-
     checkValidation() {
         return new Promise((resolve, reject) => {
             var fields = [];
@@ -98,22 +86,6 @@ class MarketAdd extends FormComponent {
         });
     }
 
-    // handleInputChange(event) {
-    //     const target = event.target;
-    //     const value = target.type === 'checkbox' ? target.checked : target.value;
-    //     const name = target.name;
-    //
-    //     var market = {...this.state.market};
-    //     market[name] = value;
-    //
-    //     var invalid = {...this.state.invalid};
-    //     invalid[name] = false;
-    //     this.setState({
-    //         market: market,
-    //         invalid: invalid
-    //     });
-    // }
-
     render() {
         console.log('FORM STATE: ', this.state);
         return (
@@ -141,6 +113,20 @@ class MarketAdd extends FormComponent {
                                        value={this.state.market.maxRating}
                                        onChange={this.handleInputChange}
                                        className={this.state.invalid.maxRating ? "field-error" :  ""}
+                                />
+                            </div>
+
+                            <div className="pure-control-group">
+                                <label htmlFor="stake">Stake (eth)<span className="required">*</span></label>
+                                <input name="stake"
+                                       type="number"
+                                       placeholder="stake"
+                                       value={this.state.market.stake}
+                                       onChange={this.handleInputChange}
+                                       min="0.00"
+                                       max="100.00"
+                                       step="0.01"
+                                       className={this.state.invalid.stake ? "field-error" :  ""}
                                 />
                             </div>
 

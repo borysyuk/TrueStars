@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {withRouter} from "react-router-dom"
+import AppStorageService from "../../services/AppStorageService";
 
 
 class MarketView extends Component {
@@ -9,6 +10,11 @@ class MarketView extends Component {
 
 
     render() {
+        console.log(this.props.marketInfo.stake);
+        // console.log(new AppStorageService.web3.utils.BN(this.props.marketInfo.stake));
+        var ethStake = AppStorageService.web3.utils.fromWei(this.props.marketInfo.stake.toString(), 'ether');
+//        var ethStake = AppStorageService.web3.utils.fromWei("100000", 'ether');
+        console.log('FFFFFF');
         return (
             <div className="pure-g">
                 <div className='pure-u-1-1'>
@@ -31,8 +37,8 @@ class MarketView extends Component {
                             <td>{this.props.marketInfo.winDistance}</td>
                         </tr>
                         <tr>
-                            <td><b>Stake wei</b></td>
-                            <td>{this.props.marketInfo.stake}</td>
+                            <td><b>Stake (eth)</b></td>
+                            <td>{ethStake}</td>
                         </tr>
                         <tr>
                             <td><b>Owner</b></td>

@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import FormComponent from "../General/FormComponent";
+import {NotificationManager} from "react-notifications";
+import MarketOwnerService from "../../services/MarketOwnerService";
+import GeneralService from "../../services/GeneralService";
 
 class PlayerWithdrawForm extends FormComponent {
     constructor(props) {
@@ -18,7 +21,15 @@ class PlayerWithdrawForm extends FormComponent {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.props.history.push('/player/market/'+this.state.marketHash);
+
+        MarketOwnerService.withdraw(this.props.hash).then( () => {
+            NotificationManager.info('Please wait for confirmation.', '', 5000);
+        }).catch(error => {
+            console.log(GeneralService.getWeb3ErrorText(error.message));
+            NotificationManager.error('Cannot reveal rating.', GeneralService.getWeb3ErrorText(error.message), 8000);
+        });
+
+        return false;
     }
 
     render() {
@@ -30,15 +41,7 @@ class PlayerWithdrawForm extends FormComponent {
                     <form className="pure-form pure-form-aligned" onSubmit={this.handleSubmit}>
                         <fieldset>
                             <div className="pure-control-group">
-                                <label htmlFor="marketHash">Find market by hash <span className="required">*</span></label>
-                                <input name="marketHash"
-                                       type="text"
-                                       placeholder="Market hash"
-                                       // value={this.state.id}
-                                       onChange={this.handleIdChange}
-
-                                />&nbsp;
-                                <input type="submit" className="pure-button" value="Find market" />
+                                <input type="submit" className="pure-button" value="Withdraw" />
                                 {/*<Link to={this.state.marketHash} className="pure-button">Find market</Link>*/}
                             </div>
                         </fieldset>

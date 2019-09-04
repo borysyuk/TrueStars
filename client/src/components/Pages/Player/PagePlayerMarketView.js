@@ -6,6 +6,7 @@ import MarketRegisterPlayer from "../../Market/MarketRegisterPlayer";
 import { Link } from 'react-router-dom';
 import PlayerCommitForm from "../../Player/PlayerCommitForm";
 import PlayerRevealForm from "../../Player/PlayerRevealForm";
+import PlayerWithdrawForm from "../../Player/PlayerWithdrawForm";
 
 class PagePlayerMarketView extends Component {
 
@@ -67,7 +68,7 @@ class PagePlayerMarketView extends Component {
                         {
                             this.state.marketInfo.phase === 3 &&
                             <div className='pure-u-1-2'>
-                                Withdraw Form
+                                <PlayerWithdrawForm marketInfo={this.state.marketInfo} hash={this.state.hash}/>
                             </div>
                         }
                     </div>
