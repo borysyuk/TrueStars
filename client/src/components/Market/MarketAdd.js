@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {NotificationManager} from 'react-notifications';
 import {withRouter} from "react-router-dom"
 import GeneralService from "../../services/GeneralService";

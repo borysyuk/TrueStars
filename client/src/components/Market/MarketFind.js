@@ -1,27 +1,29 @@
-import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import {withRouter} from "react-router-dom"
+import FormComponent from "../General/FormComponent";
 
-class MarketFind extends Component {
+class MarketFind extends FormComponent {
     constructor(props) {
         super(props);
 
+        console.log("PROPS!!!!", props);
         this.state = {
-            marketId: props.id,
-            marketHash: props.marketHash
+            form: {
+                marketId: props.id,
+            }
         };
 
-        this.handleIdChange = this.handleIdChange.bind(this);
+        this.handleInputChange = this.handleInputChange('form');
+        this.handleInputChange = this.handleInputChange.bind(this);
+
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleIdChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-
-        var state = {...this.state};
-        state.id = value;
-        state.marketHash = '/marketowner/market/view/'+value;
-
-        this.setState(state);
+    handleSubmit(event) {
+        event.preventDefault();
+        console.log(this.props);
+        this.props.history.push('/marketowner/market/view/'+this.state.form.marketId);
+        return false;
     }
 
     render() {
@@ -30,18 +32,18 @@ class MarketFind extends Component {
             <div className="pure-g">
                 <div className='pure-u-1-1'>
 
-                    <form className="pure-form pure-form-aligned">
+                    <form className="pure-form pure-form-aligned" onSubmit={this.handleSubmit}>
                         <fieldset>
                             <div className="pure-control-group">
-                                <label htmlFor="id">Find market by Internal ID <span className="required">*</span></label>
-                                <input name="id"
+                                <label htmlFor="marketId">Find market by Internal ID <span className="required">*</span></label>
+                                <input name="marketId"
                                        type="text"
                                        placeholder="Internal id"
-                                       // value={this.state.id}
-                                       onChange={this.handleIdChange}
+                                       onChange={this.handleInputChange}
+                                       value={this.state.form.marketId}
 
                                 />&nbsp;
-                                <Link to={this.state.marketHash} className="pure-button">Find market</Link>
+                                <input type="submit" className="pure-button" value="Find market" />
                             </div>
                         </fieldset>
                     </form>
@@ -51,4 +53,4 @@ class MarketFind extends Component {
     }
 }
 
-export default MarketFind;
+export default withRouter(MarketFind);

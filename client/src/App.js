@@ -19,9 +19,6 @@ import PageGeneralIndex from "./components/Pages/General/PageGeneralIndex";
 import PagePlayerIndex from "./components/Pages/Player/PagePlayerIndex";
 import PageEmpty from "./components/Pages/PageEmpty";
 import { Link } from 'react-router-dom';
-import PageMarketOwnerMarketNew from "./components/Pages/MarketOwner/PageMarketOwnerMarketNew";
-import PageMarketOwnerMarketFind from "./components/Pages/MarketOwner/PageMarketOwnerMarketFind";
-import PageMarketOwnerMarketView from "./components/Pages/MarketOwner/PageMarketOwnerMarketView";
 
 class App extends Component {
     state = {

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import {Component} from 'react';
 import {NotificationManager} from "react-notifications";
 
 class FormComponent extends Component {

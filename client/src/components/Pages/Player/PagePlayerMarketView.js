@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import MarketOwnerService from "../../../services/MarketOwnerService";
 import MarketView from "../../Market/MarketView"
-import MarketRegisterPlayer from "../../Market/MarketRegisterPlayer";
-import { Link } from 'react-router-dom';
 import PlayerCommitForm from "../../Player/PlayerCommitForm";
 import PlayerRevealForm from "../../Player/PlayerRevealForm";
 import PlayerWithdrawForm from "../../Player/PlayerWithdrawForm";
@@ -21,7 +19,7 @@ class PagePlayerMarketView extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         console.log(this.state);
         MarketOwnerService.getMarketByHash(this.state.hash).then(marketInfo => {
             console.log("marketInfo", marketInfo);

@@ -19,7 +19,7 @@ class PageMarketOwnerView extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         console.log(this.state);
         MarketOwnerService.getMarket(this.state.id).then(marketInfo => {
             console.log("marketInfo", marketInfo);

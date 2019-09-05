@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import MarketOwnerService from "../../../services/MarketOwnerService";
 import MarketAdd from "../../Market/MarketAdd";
 

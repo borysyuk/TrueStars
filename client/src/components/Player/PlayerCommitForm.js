@@ -1,5 +1,4 @@
-import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import FormComponent from "../General/FormComponent";
 import MarketOwnerService from "../../services/MarketOwnerService";
 import AppStorageService from "../../services/AppStorageService";

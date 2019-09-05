@@ -4,10 +4,6 @@ import AppStorageService from "../../services/AppStorageService";
 
 
 class MarketView extends Component {
-    constructor(props) {
-        super(props);
-    }
-
 
     render() {
         console.log(this.props.marketInfo.stake);

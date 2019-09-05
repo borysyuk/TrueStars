@@ -1,16 +1,18 @@
-import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import FormComponent from "../General/FormComponent";
+import {withRouter} from "react-router-dom"
 
-class MarketFind extends FormComponent {
+class PlayerMarketFind extends FormComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            marketHash: props.marketHash
+            form: {
+                marketHash: props.marketHash
+            }
         };
 
-        this.handleInputChange = this.handleInputChange('marketHash');
+        this.handleInputChange = this.handleInputChange('form');
         this.handleInputChange = this.handleInputChange.bind(this);
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,7 +20,7 @@ class MarketFind extends FormComponent {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.props.history.push('/player/market/'+this.state.marketHash);
+        this.props.history.push('/player/market/'+this.state.form.marketHash);
     }
 
     render() {
@@ -34,12 +36,11 @@ class MarketFind extends FormComponent {
                                 <input name="marketHash"
                                        type="text"
                                        placeholder="Market hash"
-                                       // value={this.state.id}
-                                       onChange={this.handleIdChange}
+                                       value={this.state.form.marketHash}
+                                       onChange={this.handleInputChange}
 
                                 />&nbsp;
                                 <input type="submit" className="pure-button" value="Find market" />
-                                {/*<Link to={this.state.marketHash} className="pure-button">Find market</Link>*/}
                             </div>
                         </fieldset>
                     </form>
@@ -49,4 +50,4 @@ class MarketFind extends FormComponent {
     }
 }
 
-export default MarketFind;
+export default withRouter(PlayerMarketFind);
