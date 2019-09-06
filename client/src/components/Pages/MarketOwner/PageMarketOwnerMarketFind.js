@@ -10,7 +10,7 @@ class PageMarketOwnerChange extends Component {
         return (
             <div className="pure-g generalPage">
                 <div className='pure-u-1-1'>
-                    <MarketFind marketId="" marketHash="" />
+                    <MarketFind id="" marketHash="" />
                 </div>
 
             </div>

@@ -42,7 +42,12 @@ class MarketView extends Component {
                         </tr>
                         <tr>
                             <td><b>Phase</b></td>
-                            <td>{this.props.marketInfo.phase}</td>
+                            <td>
+                                {this.props.marketInfo.phase === 1 && <b>Commit stage</b>}
+                                {this.props.marketInfo.phase === 2 && <b>Reveal stage</b>}
+                                {this.props.marketInfo.phase === 3 && <b>Withdraw stage</b>}
+                                {this.props.marketInfo.phase === 4 && <b>Destroy stage</b>}
+                            </td>
                         </tr>
                         <tr>
                             <td><b>Total votes</b></td>

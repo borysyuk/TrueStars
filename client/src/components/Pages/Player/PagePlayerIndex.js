@@ -11,7 +11,7 @@ class PagePlayerIndex extends Component {
         return (
             <div className="pure-g generalPage">
                 <div className='pure-u-1-1'>
-                    <PlayerMarketFind />
+                    <PlayerMarketFind marketHash=""/>
 
                     <Switch>
                         <Route path='/player/market/:hash' exact component={PagePlayerMarketView}/>

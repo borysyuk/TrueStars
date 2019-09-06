@@ -10,7 +10,11 @@ class MarketFind extends FormComponent {
         this.state = {
             form: {
                 marketId: props.id,
+            },
+            invalid: {
+                marketId: false,
             }
+
         };
 
         this.handleInputChange = this.handleInputChange('form');
