@@ -59,6 +59,9 @@ $  git clone https://git@github.com:borysyuk/TrueStars.git MY_DIR
 ```
 $ cd MY_DIR
 $ npm install
+$ cd ./client
+$ npm install
+$ cd ..
 ```
  Start in another terminal
 
@@ -92,6 +95,7 @@ $ truffle migrate --reset
 
 ### Start web server localhost:3000
 ```
+$ cd ./client 
 $ npm run start
 ```
 
